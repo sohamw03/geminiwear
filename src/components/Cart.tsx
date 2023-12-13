@@ -5,12 +5,12 @@ import { ShoppingCart } from "lucide-react";
 export default function Cart() {
   return (
     <Sheet>
-      <SheetTrigger asChild className="dark">
+      <SheetTrigger asChild>
         <Button variant={"outline"} size={"icon"} className="dark">
           <ShoppingCart size={20} color="white" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="dark">
+      <SheetContent>
         <SheetHeader>
           <SheetTitle>Are you sure absolutely sure?</SheetTitle>
           <SheetDescription>This action cannot be undone. This will permanently delete your account and remove your data from our servers.</SheetDescription>
