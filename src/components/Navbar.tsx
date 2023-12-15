@@ -5,8 +5,8 @@ import Cart from "./Cart";
 
 export default function Navbar() {
   return (
-    <header className="text-gray-400 bg-background dark body-font">
-      <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-start">
+    <header className="text-gray-400 bg-background dark body-font border-b">
+      <div className=" mx-auto flex flex-wrap p-5 flex-col md:flex-row items-start">
         <div className="flex w-full justify-between">
           <Link href={"/"} className="flex title-font font-medium items-center text-white mb-4 md:mb-0">
             <span className="text-xl">GeminiWear</span>
