@@ -1,18 +1,46 @@
+"use client";
+import { Values, addRemoveItemData, useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Badge } from "@/shadcn/components/ui/badge";
 import { Button } from "@/shadcn/components/ui/button";
 import { ScrollArea } from "@/shadcn/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/shadcn/components/ui/sheet";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Cart() {
+  const { cart, addToCart, removeFromCart, clearCart, subTotal }: Values = useGlobal();
+
+  const [totalItems, setTotalItems] = useState(0);
+
+  const handleAddToCart = (itemData: addRemoveItemData) => {
+    itemData.qty = 1;
+    addToCart(itemData);
+  };
+
+  const handleRemoveFromCart = (itemData: addRemoveItemData) => {
+    itemData.qty = 1;
+    removeFromCart(itemData);
+  };
+
+  useEffect(() => {
+    let total = 0;
+    for (let i = 0; i < Object.keys(cart).length; i++) {
+      const currentItem = cart[Object.keys(cart)[i]];
+      total += currentItem.qty;
+    }
+    setTotalItems(total);
+  }, [cart]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant={"outline"} size={"icon"} className="dark relative transform-gpu -translate-x-2 translate-y-2">
-          <Badge variant="default" className="absolute -top-3 -right-3 text-xs px-2">
-            1
-          </Badge>
+          {totalItems !== 0 ? (
+            <Badge variant="default" className="absolute -top-3 -right-3 text-xs px-2">
+              {totalItems}
+            </Badge>
+          ) : null}
           <ShoppingCart size={20} color="white" />
         </Button>
       </SheetTrigger>
@@ -31,43 +59,49 @@ export default function Cart() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-full">Item</TableHead>
-                {/* <TableHead>Quantity</TableHead> */}
                 <TableHead className="text-right">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {/* {invoices.map((invoice) => (
-                  <TableRow key={invoice.invoice}>
-                    <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                    <TableCell>{invoice.paymentStatus}</TableCell>
-                    <TableCell>{invoice.paymentMethod}</TableCell>
-                    <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-                  </TableRow>
-                ))} */}
-              <TableRow>
-                <TableCell className="font-medium flex flex-col gap-2">
-                  <span>{"This shirt that is very black color and blue also."}</span>
-                  <div>
-                    <Button variant="default" size="sm" className="aspect-square h-6 w-6 text-base leading-none">
-                      -
-                    </Button>
-                    <span className="px-3">{"1"}</span>
-                    <Button variant="default" size="sm" className="aspect-square h-6 w-6 text-base leading-none">
-                      +
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right align-top">{"₹500"}</TableCell>
-              </TableRow>
+              {/* Items in the cart */}
+              {Object.keys(cart).map((itemCode, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium flex flex-col gap-2">
+                    <span>{cart[itemCode].name}</span>
+                    <div className="flex flex-row gap-3 content-between items-center w-[6rem]">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="aspect-square h-6 w-6 text-base leading-none"
+                        onClick={() => {
+                          handleRemoveFromCart({ itemCode, ...cart[itemCode] });
+                        }}>
+                        -
+                      </Button>
+                      <span className="flex items-center justify-center flex-1">{cart[itemCode].qty}</span>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="aspect-square h-6 w-6 text-base leading-none"
+                        onClick={() => {
+                          handleAddToCart({ itemCode, ...cart[itemCode] });
+                        }}>
+                        +
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right align-top">₹{cart[itemCode].price}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TableCell>Total</TableCell>
-                <TableCell className="text-right">₹500</TableCell>
+                <TableCell className="text-right">₹{subTotal}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
-          <Button variant="destructive" size="sm" className="my-6 w-full">
+          <Button variant="destructive" size="sm" className="my-6 w-full" onClick={clearCart}>
             Clear Cart
           </Button>
         </ScrollArea>
