@@ -6,6 +6,7 @@ import { ScrollArea } from "@/shadcn/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/shadcn/components/ui/sheet";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Cart() {
@@ -46,64 +47,77 @@ export default function Cart() {
       </SheetTrigger>
 
       {/* Content */}
-      <SheetContent className="text-white px-0">
+      <SheetContent className="text-white px-0 w-full">
         <ScrollArea className="px-5 mx-1">
           <SheetHeader>
             <SheetTitle>Cart</SheetTitle>
           </SheetHeader>
-          <Button variant="default" size="sm" className="my-5 w-full">
-            Proceed to buy
-          </Button>
-          <Table>
-            <TableCaption>A list of your selected items.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-full">Item</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {/* Items in the cart */}
-              {Object.keys(cart).map((itemCode, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium flex flex-col gap-2">
-                    <span>{cart[itemCode].name}</span>
-                    <div className="flex flex-row gap-3 content-between items-center w-[6rem]">
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="aspect-square h-6 w-6 text-base leading-none"
-                        onClick={() => {
-                          handleRemoveFromCart({ itemCode, ...cart[itemCode] });
-                        }}>
-                        -
-                      </Button>
-                      <span className="flex items-center justify-center flex-1">{cart[itemCode].qty}</span>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="aspect-square h-6 w-6 text-base leading-none"
-                        onClick={() => {
-                          handleAddToCart({ itemCode, ...cart[itemCode] });
-                        }}>
-                        +
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right align-top">₹{cart[itemCode].price}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell>Total</TableCell>
-                <TableCell className="text-right">₹{subTotal}</TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-          <Button variant="destructive" size="sm" className="my-6 w-full" onClick={clearCart}>
-            Clear Cart
-          </Button>
+          {/* Show cart when not empty */}
+          {Object.keys(cart).length !== 0 ? (
+            <>
+              <Link href={"/checkout"}>
+                <Button variant="default" size="sm" className="my-5 w-full">
+                  Proceed to buy
+                </Button>
+              </Link>
+              <Table>
+                <TableCaption>A list of your selected items.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-full">Item</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Items in the cart */}
+                  {Object.keys(cart).map((itemCode, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium flex flex-col gap-2">
+                        <span>{cart[itemCode].name}</span>
+                        <div className="flex flex-row gap-3 content-between items-center w-[6rem]">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="aspect-square h-6 w-6 text-base leading-none"
+                            onClick={() => {
+                              handleRemoveFromCart({ itemCode, ...cart[itemCode] });
+                            }}>
+                            -
+                          </Button>
+                          <span className="flex items-center justify-center flex-1">{cart[itemCode].qty}</span>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="aspect-square h-6 w-6 text-base leading-none"
+                            onClick={() => {
+                              handleAddToCart({ itemCode, ...cart[itemCode] });
+                            }}>
+                            +
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right align-top">₹{cart[itemCode].price}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell>Total</TableCell>
+                    <TableCell className="text-right">₹{subTotal}</TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+              <Button variant="destructive" size="sm" className="my-6 w-full" onClick={clearCart}>
+                Clear Cart
+              </Button>
+            </>
+          ) : (
+            // Show this when cart is empty
+            <div className="flex flex-col items-center justify-center h-full mt-16">
+              <h1 className="text-2xl font-bold">Your cart is empty</h1>
+              <p className="text-gray-400">Add items to your cart to see them here.</p>
+            </div>
+          )}
         </ScrollArea>
       </SheetContent>
     </Sheet>

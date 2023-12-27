@@ -2,7 +2,8 @@ export default function TShirts() {
   return (
     <main>
       <section className="text-gray-400 body-font dark bg-background">
-        <div className="container px-5 py-24 mx-auto">
+        <div className="container px-5 pb-24 pt-6 mx-auto">
+          <h1 className="text-2xl text-white mb-4">Tshirts</h1>
           <div className="flex flex-wrap -m-4">
             <div className="lg:w-1/4 md:w-1/2 p-4 w-full">
               <a className="block relative h-48 rounded overflow-hidden">

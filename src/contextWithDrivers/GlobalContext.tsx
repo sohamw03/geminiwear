@@ -107,7 +107,6 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
       console.log(error);
       localStorage.clear();
     }
-    console.log({ cart, subTotal });
   }, []);
 
   const values: Values = {
