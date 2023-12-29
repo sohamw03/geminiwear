@@ -36,9 +36,9 @@ export default function Cart() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} size={"icon"} className="dark relative transform-gpu -translate-x-2 translate-y-2">
+        <Button variant={"outline"} size={"icon"} className="dark relative">
           {totalItems !== 0 ? (
-            <Badge variant="default" className="absolute -top-3 -right-3 text-xs px-2">
+            <Badge variant="default" className="absolute -top-2 -right-2 text-xs leading-none px-1">
               {totalItems}
             </Badge>
           ) : null}

@@ -26,7 +26,7 @@ export default function Product({ params }: { params: { slug: string } }) {
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src="https://dummyimage.com/400x400" />
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-            <h2 className="text-sm title-font text-gray-300 tracking-widest">BRAND NAME</h2>
+            <h2 className="text-sm title-font text-gray-300 tracking-widest">GEMINIWEAR</h2>
             <h1 className="text-gray-100 text-3xl title-font font-medium mb-1">The Catcher in the Rye</h1>
             <div className="flex mb-4">
               <span className="flex items-center">

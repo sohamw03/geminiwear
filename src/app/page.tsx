@@ -3,15 +3,15 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className="dark bg-background">
-      <section>
-        <Image src="/images/hero.jpeg" width={1920} height={1080} alt={"hero"} className="w-full object-cover h-[40rem] blur-sm" style={{ objectPosition: "center 75%" }} />
+      <section className="relative">
+        <div className="flex flex-wrap w-full mb-20 px-8 flex-col items-center text-center absolute top-[40%] left-[50%] -translate-x-[50%] -translate-y-[50%] z-10">
+          <h1 className="sm:text-3xl text-2xl font-semibold title-font mb-2 text-gray-100">Welcome to GeminiWear</h1>
+          <p className="lg:w-1/2 w-full leading-relaxed text-gray-300">Discover the latest trends in fashion and shop for high-quality clothing and accessories.</p>
+        </div>
+        <Image src="/images/hero.jpeg" width={1920} height={1080} alt={"hero"} className="w-full object-cover h-[88svh] brightness-50" style={{ objectPosition: "center 75%" }} />
       </section>
       <section className="text-gray-400 body-font">
         <div className="container px-5 py-24 mx-auto">
-          <div className="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-100">Welcome to GeminiWear</h1>
-            <p className="lg:w-1/2 w-full leading-relaxed text-gray-300">Discover the latest trends in fashion and shop for high-quality clothing and accessories.</p>
-          </div>
           <div className="flex flex-wrap -m-4 justify-center">
             <div className="xl:w-1/3 md:w-1/2 p-4">
               <div className="border border-gray-600 p-6 rounded-lg">
