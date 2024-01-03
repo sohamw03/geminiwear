@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/shadcn/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
+import { Checkbox } from "@/shadcn/components/ui/checkbox";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -20,6 +22,7 @@ const formSchema = z.object({
     .max(32, {
       message: "Please enter a valid password. Maximum 32 characters.",
     }),
+  rememberMe: z.boolean().optional(),
 });
 
 export default function Login() {
@@ -32,6 +35,7 @@ export default function Login() {
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   });
 
@@ -54,7 +58,7 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Email" autoComplete="on" {...field} />
+                      <Input className="focus-visible:ring-white" placeholder="Email" autoComplete="email" {...field} autoFocus />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -70,6 +74,25 @@ export default function Login() {
                       <Input type="password" className="focus-visible:ring-white" placeholder="Password" autoComplete="current-password" {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Remember me</FormLabel>
+                    </div>
+                    <FormLabel className="flex justify-end align-middle flex-1 underline">
+                      <Link href="/forgot-password" className="text-sm font-medium leading-none opacity-70">
+                        Forgot your password?
+                      </Link>
+                    </FormLabel>
                   </FormItem>
                 )}
               />

@@ -16,21 +16,21 @@ export default function Account() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
           <Github className="mr-2 h-4 w-4" />
           <span>GitHub</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
           <LifeBuoy className="mr-2 h-4 w-4" />
           <span>Support</span>
         </DropdownMenuItem>
@@ -40,13 +40,13 @@ export default function Account() {
           <span>Log out</span>
         </DropdownMenuItem> */}
         <Link href={"/login"}>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <LogIn className="mr-2 h-4 w-4" />
             <span>Log in</span>
           </DropdownMenuItem>
         </Link>
         <Link href={"/signup"}>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <UserRoundPlus className="mr-2 h-4 w-4" />
             <span>Sign up</span>
           </DropdownMenuItem>
