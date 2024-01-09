@@ -5,9 +5,8 @@ import Product from "../../../../models/Product";
 export const POST = async (req: Request) => {
   await connectDb();
 
+  const { products }: any = await req.json();
   try {
-    const { products }: any = await req.json();
-
     for (let i = 0; i < products.length; i++) {
       let p = new Product({
         title: products[i].title,
@@ -24,7 +23,7 @@ export const POST = async (req: Request) => {
     }
   } catch (error) {
     return NextResponse.json({ message: error }, { status: 500 });
+  } finally {
+    return NextResponse.json({ message: "success", products: products }, { status: 200 });
   }
-
-  return NextResponse.json({ message: "Success" }, { status: 200 });
 };
