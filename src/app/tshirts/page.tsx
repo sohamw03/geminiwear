@@ -2,7 +2,7 @@ import connectDb from "@/middleware/mongoose";
 import Product from "../../../models/Product";
 import Link from "next/link";
 
-export const preload = async () => {
+const preload = async () => {
   await connectDb();
   const products = await Product.find({ category: "tshirt" });
   return products;
