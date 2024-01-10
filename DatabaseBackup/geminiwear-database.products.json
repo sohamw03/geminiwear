@@ -1,0 +1,300 @@
+[{
+  "_id": {
+    "$oid": "659ee1945425b19702ab248f"
+  },
+  "title": "Urban Chic Vibe Tee",
+  "slug": "urban-chic-vibe-tee",
+  "desc": "Experience the urban chic vibe with this comfortable and stylish black t-shirt.",
+  "img": "https://t4.ftcdn.net/jpg/04/70/41/75/360_F_470417568_jFftLDWqMwxTt7O6XJFEVjd96ulRFqZD.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Gray",
+    "White"
+  ],
+  "price": 1599,
+  "availableQty": 50,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.224Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.224Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab2492"
+  },
+  "title": "Sunset Serenity T-Shirt",
+  "slug": "sunset-serenity-tshirt",
+  "desc": "Bring a sense of sunset serenity into your wardrobe with this black tee.",
+  "img": "https://t3.ftcdn.net/jpg/06/28/78/46/240_F_628784631_scHW6WFmmxZjFfNGzI8KcF9sqMCJLEa5.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Orange",
+    "Black",
+    "Yellow"
+  ],
+  "price": 1799,
+  "availableQty": 45,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.295Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.295Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab2494"
+  },
+  "title": "Midnight Elegance Shirt",
+  "slug": "midnight-elegance-shirt",
+  "desc": "Embrace midnight elegance in this sophisticated black t-shirt.",
+  "img": "https://png.pngtree.com/thumb_back/fh260/background/20230704/pngtree-d-rendering-of-a-white-background-with-close-up-blue-t-image_3741059.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Silver",
+    "Navy"
+  ],
+  "price": 1699,
+  "availableQty": 40,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.312Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.312Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab2496"
+  },
+  "title": "Dreamy Noir Fashion Tee",
+  "slug": "dreamy-noir-fashion-tee",
+  "desc": "Indulge in dreamy noir fashion with this black tee.",
+  "img": "https://static.vecteezy.com/system/resources/previews/020/705/796/large_2x/mockup-of-a-blank-royal-yellow-tshirt-front-and-back-isolated-on-white-background-photo.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Purple",
+    "Blue"
+  ],
+  "price": 1499,
+  "availableQty": 55,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.326Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.326Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab2498"
+  },
+  "title": "Bold Monochrome Style Shirt",
+  "slug": "bold-monochrome-style-shirt",
+  "desc": "Unleash bold monochrome style with this classic black t-shirt.",
+  "img": "https://shop.nma.gov.au/cdn/shop/files/Untitled-246_bdb18143-9ff8-4dba-9f39-32c474bea989.jpg?v=1695008813",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "White",
+    "Gray"
+  ],
+  "price": 1899,
+  "availableQty": 48,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.342Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.342Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab249a"
+  },
+  "title": "Vintage Noir Tee",
+  "slug": "vintage-noir-tee",
+  "desc": "Step into the vintage era with this timeless black tee.",
+  "img": "https://st.depositphotos.com/1377864/2119/i/450/depositphotos_21197651-stock-photo-black-and-white-man-t.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Brown",
+    "Beige"
+  ],
+  "price": 1599,
+  "availableQty": 42,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.359Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.359Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab249c"
+  },
+  "title": "Sleek Ebony Fashion Shirt",
+  "slug": "sleek-ebony-fashion-shirt",
+  "desc": "Achieve a sleek ebony look with this fashionable black t-shirt.",
+  "img": "https://finebuy.co.in/wp-content/uploads/2022/03/92.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Charcoal",
+    "Silver"
+  ],
+  "price": 1999,
+  "availableQty": 38,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.374Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.374Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab249e"
+  },
+  "title": "Minimalist Midnight Tee",
+  "slug": "minimalist-midnight-tee",
+  "desc": "Embrace a minimalist vibe with this midnight black t-shirt.",
+  "img": "https://m.media-amazon.com/images/I/B12NRS34ojS._CLa%7C2140%2C2000%7C61iK1059fRL.png%7C0%2C0%2C2140%2C2000%2B0.0%2C0.0%2C2140.0%2C2000.0_AC_SX569_.png",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Gray",
+    "White"
+  ],
+  "price": 1699,
+  "availableQty": 47,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.388Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.388Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab24a0"
+  },
+  "title": "Ethereal Ebony Elegance Shirt",
+  "slug": "ethereal-ebony-elegance-shirt",
+  "desc": "Radiate ethereal ebony elegance in this stunning black tee.",
+  "img": "https://media.takealot.com/covers_tsins/57551899/57551899-1-pdpxl.jpeg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Gold",
+    "Navy"
+  ],
+  "price": 2099,
+  "availableQty": 36,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.410Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.410Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "659ee1945425b19702ab24a2"
+  },
+  "title": "Classic Noir Wardrobe Essential",
+  "slug": "classic-noir-wardrobe-essential",
+  "desc": "Make this classic black tee a must-have in your noir wardrobe.",
+  "img": "https://www.fotosjov.dk/content/images/produkter/t-shirts/t-shirts_2.jpg",
+  "category": "tshirt",
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "color": [
+    "Black",
+    "Red",
+    "White"
+  ],
+  "price": 1799,
+  "availableQty": 44,
+  "createdAt": {
+    "$date": "2024-01-10T18:27:32.430Z"
+  },
+  "updatedAt": {
+    "$date": "2024-01-10T18:27:32.430Z"
+  },
+  "__v": 0
+}]
