@@ -20,12 +20,18 @@ export default async function Hoodies() {
             {hoodies.map((hoodie) => (
               <div className="lg:w-1/4 md:w-1/2 p-4 w-full hover:bg-slate-900 transition-all rounded-lg" key={hoodie._id}>
                 <Link href={`/product/${hoodie.slug}`} className="block relative h-48 rounded overflow-hidden">
-                  <img alt="ecommerce" className="object-cover object-center w-full h-full block" src={hoodie.img} />
+                  <img alt="ecommerce" className="object-contain object-center w-full h-full block" src={hoodie.img} />
                 </Link>
                 <div className="mt-4">
                   <h3 className="text-xs tracking-widest title-font mb-1">{hoodie.category}</h3>
                   <h2 className="text-white title-font text-lg font-medium">{hoodie.title}</h2>
                   <p className="mt-1">₹{hoodie.price}</p>
+                  <p className="mt-1">
+                    {hoodie.size.map((size: any) => {
+                      return <span className="border px-1 rounded mr-1">{size}</span>;
+                    })}
+                  </p>
+                  <p className="mt-1"></p>
                 </div>
               </div>
             ))}

@@ -3,28 +3,36 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 // Types
 interface CartItem {
-  qty: number;
-  price: number;
-  name: string;
+  title: string;
+  slug: string;
+  desc: string;
+  img: string;
+  category: string;
   size: string;
-  variant: string;
+  color: string;
+  price: number;
+  qty: number;
 }
 
 export interface Values {
   cart: Record<string, CartItem>;
   addToCart: ({}: addRemoveItemData) => void;
   removeFromCart: ({}: addRemoveItemData) => void;
-  clearCart: () => void;
+  clearCart: () => boolean;
   subTotal: number;
 }
 
 export interface addRemoveItemData {
-  itemCode: string;
-  qty: number;
-  price: number;
-  name: string;
+  _id: string;
+  title: string;
+  slug: string;
+  desc: string;
+  img: string;
+  category: string;
   size: string;
-  variant: string;
+  color: string;
+  price: number;
+  qty: number;
 }
 
 const globalContext = createContext<Values>({} as Values);
@@ -51,36 +59,36 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     calculateSubTotal(newCart);
   };
 
-  // Add item to cart
-  const addToCart = ({ itemCode, qty, price, name, size, variant }: addRemoveItemData) => {
-    const data: any = {
-      itemCode,
-      qty,
-      price,
-      name,
-      size,
-      variant,
-    };
+  // Add item to cart or update qty by qty if already present
+  const addToCart = (itemData: addRemoveItemData) => {
     const newCart: Record<string, CartItem> = { ...cart };
-
-    if (itemCode in newCart) {
-      newCart[itemCode].qty += qty;
+    console.log(itemData);
+    if (itemData._id in newCart) {
+      // Update qty of existing item
+      newCart[itemData._id].qty += itemData.qty;
+      // Update size and color of existing item
+      newCart[itemData._id].size = itemData.size;
+      newCart[itemData._id].color = itemData.color;
     } else {
-      newCart[itemCode] = { ...data, qty: 1 };
+      // Add new item to cart
+      if (itemData.qty > 0) {
+        newCart[itemData._id] = { ...itemData, qty: 1 };
+      }
     }
 
     setCart(newCart);
     saveCart(newCart);
   };
 
-  const removeFromCart = ({ itemCode, qty, price, name, size, variant }: addRemoveItemData) => {
+  // Remove item from cart if qty is 0
+  const removeFromCart = (itemData: addRemoveItemData) => {
     const newCart: Record<string, CartItem> = { ...cart };
 
-    if (itemCode in newCart) {
-      newCart[itemCode].qty -= qty;
+    if (itemData._id in newCart) {
+      newCart[itemData._id].qty -= itemData.qty;
 
-      if (newCart[itemCode].qty <= 0) {
-        delete newCart[itemCode];
+      if (newCart[itemData._id].qty <= 0) {
+        delete newCart[itemData._id];
       }
     }
 
@@ -92,11 +100,11 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
   const clearCart = () => {
     setCart({});
     saveCart({});
+    return true;
   };
 
   // Load cart from local storage on reload
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify({ "14230798": { qty: 2, price: 899, name: "Monte Carlo Red Festive Collection", size: "M", variant: "Black" } }));
     try {
       const data = localStorage.getItem("cart");
       if (data) {
