@@ -1,22 +1,24 @@
 import { addRemoveItemData } from "@/contextWithDrivers/GlobalContext";
-import ProductModel, { IProduct } from "../../../../models/Product";
+import ProductModel from "../../../../models/Product";
 import { AddToCartBtn, PincodeForm, SizeColorChooser } from "../../../components/ProductPageComponents";
 
 async function prefetch(slug: string) {
   const product = await ProductModel.findOne({ slug });
 
-  return {
-    _id: product._id,
-    title: product.title,
-    slug: product.slug,
-    desc: product.desc,
-    img: product.img,
-    category: product.category,
-    size: product.size,
-    color: product.color,
-    price: product.price,
-    availableQty: product.availableQty,
-  };
+  return JSON.parse(
+    JSON.stringify({
+      _id: product._id,
+      title: product.title,
+      slug: product.slug,
+      desc: product.desc,
+      img: product.img,
+      category: product.category,
+      size: product.size,
+      color: product.color,
+      price: product.price,
+      availableQty: product.availableQty,
+    })
+  );
 }
 
 export default async function Product({ params }: { params: { slug: string } }) {

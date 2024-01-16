@@ -60,7 +60,7 @@ export function SizeColorChooser({ product }: any) {
 
   useEffect(() => {
     router.push(`${pathname}?size=${size}&color=${color}`);
-    addToCart({ ...product, size: size, color: color, qty: 0 });
+    addToCart({ ...product, size: size, color: color, qty: 0 }, false);
   }, [size, color]);
 
   return (
@@ -98,7 +98,7 @@ export function SizeColorChooser({ product }: any) {
 
 export function AddToCartBtn({ product }: any) {
   // Global context
-  const { addToCart, removeFromCart, clearCart, cart }: Values = useGlobal();
+  const { addToCart, removeFromCart, buyNow, cart }: Values = useGlobal();
 
   // Local states
   const [quantity, setQuantity] = useState(0);
@@ -121,11 +121,9 @@ export function AddToCartBtn({ product }: any) {
     }
   };
 
-  // TODO: CLEAR CART NOT HAPPENING
   const handleBuyNow = () => {
-    //   clearCart();
-    //   addToCart({ ...product, size: size, color: color, qty: 1 });
-    //   router.push("/checkout");
+    buyNow({ ...product, size: size, color: color, qty: 1 });
+    router.push("/checkout");
   };
 
   useEffect(() => {

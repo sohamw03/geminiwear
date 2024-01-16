@@ -17,7 +17,7 @@ export default async function Hoodies() {
         <div className="container px-5 pb-24 pt-6 mx-auto">
           <h1 className="text-2xl text-white mb-8">Hoodies</h1>
           <div className="flex flex-wrap -m-4">
-            {hoodies.map((hoodie) => (
+            {hoodies.map((hoodie, index) => (
               <div className="lg:w-1/4 md:w-1/2 p-4 w-full hover:bg-slate-900 transition-all rounded-lg" key={hoodie._id}>
                 <Link href={`/product/${hoodie.slug}`} className="block relative h-48 rounded overflow-hidden">
                   <img alt="ecommerce" className="object-contain object-center w-full h-full block" src={hoodie.img} />
