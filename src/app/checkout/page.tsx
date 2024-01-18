@@ -246,33 +246,35 @@ export default function Checkout() {
                 </TableHeader>
                 <TableBody>
                   {/* Items in the cart */}
-                  {Object.keys(cart).map((itemCode, index) => (
+                  {Object.keys(cart).map((_id, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium flex flex-col gap-2">
-                        <span>{cart[itemCode].name}</span>
+                        <span>
+                          {cart[_id].title} ({cart[_id].size}) ({cart[_id].color})
+                        </span>
                         <div className="flex flex-row gap-3 content-between items-center w-[6rem]">
                           <Button
                             variant="default"
                             size="sm"
                             className="aspect-square h-6 w-6 text-base leading-none"
                             onClick={() => {
-                              handleRemoveFromCart({ itemCode, ...cart[itemCode] });
+                              handleRemoveFromCart({ _id, ...cart[_id] });
                             }}>
                             -
                           </Button>
-                          <span className="flex items-center justify-center flex-1">{cart[itemCode].qty}</span>
+                          <span className="flex items-center justify-center flex-1">{cart[_id].qty}</span>
                           <Button
                             variant="default"
                             size="sm"
                             className="aspect-square h-6 w-6 text-base leading-none"
                             onClick={() => {
-                              handleAddToCart({ itemCode, ...cart[itemCode] });
+                              handleAddToCart({ _id, ...cart[_id] });
                             }}>
                             +
                           </Button>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right align-top">₹{cart[itemCode].price}</TableCell>
+                      <TableCell className="text-right align-top">₹{cart[_id].price}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

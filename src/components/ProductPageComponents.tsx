@@ -6,6 +6,7 @@ import { Input } from "@/shadcn/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function PincodeForm() {
   const [serviceable, setServiceable] = useState(-1);
@@ -14,12 +15,24 @@ export function PincodeForm() {
     e.preventDefault();
     const pincode = e.currentTarget.pincode.value;
     console.log(pincode);
-    const pins = await fetch(`http://localhost:3000/api/pincode?p=${pincode}`, { method: "GET" });
-    const pinJson = await pins.json();
-    if (pinJson.serviceablePincodes.includes(pincode)) {
-      setServiceable(1);
+    if (pincode.length === 6) {
+      const pins = await fetch(`http://localhost:3000/api/pincode?p=${pincode}`, { method: "GET" });
+      const pinJson = await pins.json();
+      if (pinJson.serviceablePincodes.includes(pincode)) {
+        setServiceable(1);
+        toast.success("Item is Deliverable to your location.", {
+          position: "bottom-center",
+        });
+      } else {
+        setServiceable(0);
+        toast.error("Sorry! this item is not deliverable to your location.", {
+          position: "bottom-center",
+        });
+      }
     } else {
-      setServiceable(0);
+      toast.info("Please enter a valid pincode.", {
+        position: "bottom-center",
+      });
     }
   };
 
@@ -31,7 +44,6 @@ export function PincodeForm() {
           Check
         </Button>
       </div>
-      {serviceable !== -1 ? <p className={`ml-1`}>{serviceable === 1 ? "Item is Deliverable to your location." : "Sorry! this item is not deliverable to your location."}</p> : null}
     </form>
   );
 }
@@ -114,6 +126,10 @@ export function AddToCartBtn({ product }: any) {
     if (flag === 1 && quantity < product.availableQty) {
       setQuantity((q) => q + 1);
       addToCart({ ...product, size: size, color: color, qty: 1 });
+      toast.loading("Added an item to cart", {
+        description: `${product.title} added to cart`,
+        position: "bottom-center",
+      });
     }
     if (flag === -1 && quantity > 0) {
       setQuantity((q) => q - 1);

@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // const router = useRouter();
 
@@ -108,7 +109,6 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     console.log(itemData);
     setCart(() => newCart);
     saveCart(newCart);
-    // router.push("/checkout");
   };
 
   // Empty the cart completely
