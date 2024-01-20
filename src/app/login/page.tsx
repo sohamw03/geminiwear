@@ -5,10 +5,12 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/shadcn/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
-import { Input } from "@/shadcn/components/ui/input";
 import { Checkbox } from "@/shadcn/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
+import { Input } from "@/shadcn/components/ui/input";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -26,8 +28,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-  // Global Context
-  // const {  } = useGlobal();
+  const router = useRouter();
 
   // Form validation
   const form = useForm({
@@ -39,8 +40,35 @@ export default function Login() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    const payload = {
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
+        form.reset();
+        setTimeout(() => {
+          router.push("/tshirts");
+        }, 2000);
+      } else {
+        form.setError("email", { message: responseJson.error });
+        form.setError("password", { message: responseJson.error });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

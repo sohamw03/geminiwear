@@ -12,8 +12,7 @@ export const POST = async (req: Request) => {
       await p.save();
     }
   } catch (error) {
-    return NextResponse.json({ message: error }, { status: 500 });
-  } finally {
-    return NextResponse.json({ message: "success", products: products }, { status: 200 });
+    return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }
+  return NextResponse.json({ success: true, products: products }, { status: 200 });
 };

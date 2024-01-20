@@ -7,6 +7,8 @@ import * as z from "zod";
 import { Button } from "@/shadcn/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -34,8 +36,7 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 export default function Signup() {
-  // Global Context
-  // const {  } = useGlobal();
+  const router = useRouter();
 
   // Form validation
   const form = useForm({
@@ -49,8 +50,31 @@ export default function Signup() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    const payload = { ...data, name: `${data.firstName} ${data.lastName}` };
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
+        form.reset();
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      } else {
+        form.setError("email", { message: responseJson.error });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

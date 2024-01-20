@@ -1,9 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-let User;
+interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+}
+
+let User: mongoose.Model<IUser>;
 
 try {
-  User = mongoose.model("User");
+  User = mongoose.model<IUser>("User");
 } catch (error) {
   const UserSchema = new mongoose.Schema(
     {
@@ -13,7 +19,7 @@ try {
     },
     { timestamps: true }
   );
-  User = mongoose.model("User", UserSchema);
+  User = mongoose.model<IUser>("User", UserSchema);
 }
 
 export default User;

@@ -9,8 +9,8 @@ export const POST = async (req: Request) => {
 
   try {
     const products = await Product.find();
-    return NextResponse.json({ products }, { status: 200 });
+    return NextResponse.json({ success: true, products }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }
 };

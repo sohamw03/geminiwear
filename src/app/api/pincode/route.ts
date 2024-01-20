@@ -5,5 +5,5 @@ const serviceablePincodes = ["431002", "431003", "431004", "431005"]; // Example
 export function GET(req: NextRequest, res: NextResponse) {
   const p = req.nextUrl.searchParams.get("p") || "";
 
-  return NextResponse.json({ userPincode: p, serviceablePincodes });
+  return NextResponse.json({ success: true, userPincode: p, serviceablePincodes });
 }
