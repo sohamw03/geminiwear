@@ -1,7 +1,7 @@
 "use client";
 import { Values, useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 
 export default function Order() {
   // Global context
@@ -28,13 +28,15 @@ export default function Order() {
                   </TableHeader>
                   <TableBody>
                     {/* Items in the cart */}
-                    {Object.keys(cart).map((itemCode, index) => (
+                    {Object.keys(cart).map((_id, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium flex flex-col gap-2">
-                          <span>{cart[itemCode].name}</span>
+                          <span>
+                            {cart[_id].title} ({cart[_id].size}) ({cart[_id].color})
+                          </span>
                         </TableCell>
-                        <TableCell className="text-center align-top">{cart[itemCode].qty}</TableCell>
-                        <TableCell className="text-right align-top">₹{cart[itemCode].price}</TableCell>
+                        <TableCell className="text-center align-top">{cart[_id].qty}</TableCell>
+                        <TableCell className="text-right align-top">₹{cart[_id].price}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -51,7 +53,11 @@ export default function Order() {
               Track Order
             </Button>
           </div>
-          <img alt="ecommerce" className="lg:w-1/2 lg:pl-10 mt-6 w-full lg:h-auto h-64 object-cover object-center rounded" src="https://dummyimage.com/400x400" />
+          <div className="lg:w-1/2 lg:pl-10 mt-6 w-full lg:h-auto h-auto aspect-square rounded flex flex-wrap gap-2">
+            {Object.keys(cart).map((_id, index) => {
+              return <img key={index} alt="ecommerce" className={`object-cover rounded`} style={{ width: `calc(${100 / Object.keys(cart).length}% - 0.5rem)` }} src={cart[_id].img} />;
+            })}
+          </div>
         </div>
       </div>
     </section>

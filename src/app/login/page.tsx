@@ -11,6 +11,8 @@ import { Input } from "@/shadcn/components/ui/input";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useGlobal } from "@/contextWithDrivers/GlobalContext";
+import { jwtDecode } from "jwt-decode";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -28,6 +30,9 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+  // Global context
+  const { setUser } = useGlobal();
+
   const router = useRouter();
 
   // Form validation
@@ -59,6 +64,10 @@ export default function Login() {
       if (responseJson.success && response.ok) {
         toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
         form.reset();
+        localStorage.setItem("token", responseJson.data.token);
+        const user = { ...jwtDecode(responseJson.data.token), loggedIn: true };
+        setUser(user);
+
         setTimeout(() => {
           router.push("/tshirts");
         }, 2000);

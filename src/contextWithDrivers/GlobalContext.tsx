@@ -1,8 +1,6 @@
 "use client";
+import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
-import { toast } from "sonner";
-
-// const router = useRouter();
 
 // Types
 interface CartItem {
@@ -24,6 +22,11 @@ export interface Values {
   buyNow: ({}: addRemoveItemData) => void;
   clearCart: () => boolean;
   subTotal: number;
+  user: Record<string, any>;
+  setUser: React.Dispatch<React.SetStateAction<Object>>;
+  logout: () => void;
+  isCartOpen: boolean;
+  setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface addRemoveItemData {
@@ -43,7 +46,9 @@ const globalContext = createContext<Values>({} as Values);
 
 export function GlobalContextProvider({ children }: { children: React.ReactNode }) {
   // Global states
+  const [user, setUser] = useState<Record<string, any>>({ loggedIn: false });
   const [cart, setCart] = useState<Record<string, CartItem>>({});
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [subTotal, setSubTotal] = useState<number>(0);
 
   // Calulate subtotal
@@ -121,10 +126,22 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     return true;
   };
 
+  // Auth logout
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(() => ({ loggedIn: false }));
+    clearCart();
+  };
+
   // Load cart from local storage on reload
   useEffect(() => {
     try {
       const data = localStorage.getItem("cart");
+      const token = localStorage.getItem("token");
+      if (token) {
+        setUser(() => ({ ...jwtDecode(token), loggedIn: true }));
+      }
+
       if (data) {
         setCart(() => JSON.parse(data));
         calculateSubTotal(JSON.parse(data));
@@ -142,6 +159,11 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     buyNow,
     clearCart,
     subTotal,
+    user,
+    setUser,
+    logout,
+    isCartOpen,
+    setIsCartOpen,
   };
 
   return <globalContext.Provider value={values}>{children}</globalContext.Provider>;

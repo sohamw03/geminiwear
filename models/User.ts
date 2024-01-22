@@ -1,9 +1,11 @@
 import mongoose, { Document } from "mongoose";
+import crypto from "crypto";
 
 interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  setPassword: (password: string) => void;
+  validPassword: (password: string) => boolean;
 }
 
 let User: mongoose.Model<IUser>;
@@ -15,10 +17,22 @@ try {
     {
       name: { type: String, require: true },
       email: { type: String, require: true, unique: true },
-      password: { type: String, require: true },
+      hash: String,
+      salt: String,
     },
     { timestamps: true }
   );
+
+  UserSchema.methods.setPassword = function (password: string) {
+    this.salt = crypto.randomBytes(16).toString("hex");
+    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, "sha512").toString("hex");
+  };
+
+  UserSchema.methods.validPassword = function (password: string) {
+    const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, "sha512").toString("hex");
+    return this.hash === hash;
+  };
+
   User = mongoose.model<IUser>("User", UserSchema);
 }
 

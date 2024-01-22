@@ -110,7 +110,7 @@ export function SizeColorChooser({ product }: any) {
 
 export function AddToCartBtn({ product }: any) {
   // Global context
-  const { addToCart, removeFromCart, buyNow, cart }: Values = useGlobal();
+  const { addToCart, removeFromCart, buyNow, cart, user }: Values = useGlobal();
 
   // Local states
   const [quantity, setQuantity] = useState(0);
@@ -138,8 +138,12 @@ export function AddToCartBtn({ product }: any) {
   };
 
   const handleBuyNow = () => {
-    buyNow({ ...product, size: size, color: color, qty: 1 });
-    router.push("/checkout");
+    if (user.loggedIn) {
+      buyNow({ ...product, size: size, color: color, qty: 1 });
+      router.push("/checkout");
+    } else {
+      router.push("/login");
+    }
   };
 
   useEffect(() => {

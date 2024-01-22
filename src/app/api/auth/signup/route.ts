@@ -13,7 +13,8 @@ export const POST = async (req: Request) => {
       throw new Error("User email already exists");
     }
 
-    const newUser = new User({ name, email, password });
+    const newUser = new User({ name, email });
+    newUser.setPassword(password);
     await newUser.save();
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 200 });

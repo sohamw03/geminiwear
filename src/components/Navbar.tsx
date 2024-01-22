@@ -1,8 +1,6 @@
-import { Button } from "@/shadcn/components/ui/button";
-import { UserRound } from "lucide-react";
 import Link from "next/link";
-import Cart from "./Cart";
 import Account from "./Account";
+import Cart from "./Cart";
 
 export default function Navbar() {
   return (

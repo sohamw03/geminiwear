@@ -15,9 +15,7 @@ const formSchema = z
     firstName: z.string().min(2, {
       message: "Please enter a valid first name. Minimum 2 characters.",
     }),
-    lastName: z.string().min(2, {
-      message: "Please enter a valid last name. Minimum 2 characters.",
-    }),
+    lastName: z.string(),
     email: z.string().email({
       message: "Please enter a valid email address.",
     }),
@@ -52,7 +50,7 @@ export default function Signup() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    const payload = { ...data, name: `${data.firstName} ${data.lastName}` };
+    const payload = { ...data, name: `${data.firstName} ${data.lastName}`.trim() };
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",

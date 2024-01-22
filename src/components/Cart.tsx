@@ -7,12 +7,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/sh
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Cart() {
-  const { cart, addToCart, removeFromCart, clearCart, subTotal }: Values = useGlobal();
+  // Global context
+  const { cart, addToCart, removeFromCart, clearCart, subTotal, user, isCartOpen, setIsCartOpen }: Values = useGlobal();
 
   const [totalItems, setTotalItems] = useState(0);
+
+  const router = useRouter();
 
   const handleAddToCart = (itemData: addRemoveItemData) => {
     itemData.qty = 1;
@@ -22,6 +26,16 @@ export default function Cart() {
   const handleRemoveFromCart = (itemData: addRemoveItemData) => {
     itemData.qty = 1;
     removeFromCart(itemData);
+  };
+
+  const proceedToBuy = () => {
+    if (user.loggedIn) {
+      setIsCartOpen(false);
+      router.push("/checkout");
+    } else {
+      setIsCartOpen(false);
+      router.push("/login");
+    }
   };
 
   useEffect(() => {
@@ -34,7 +48,7 @@ export default function Cart() {
   }, [cart]);
 
   return (
-    <Sheet>
+    <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetTrigger asChild>
         <Button variant={"outline"} size={"icon"} className="dark relative">
           {totalItems !== 0 ? (
@@ -55,11 +69,9 @@ export default function Cart() {
           {/* Show cart when not empty */}
           {Object.keys(cart).length !== 0 ? (
             <>
-              <Link href={"/checkout"}>
-                <Button variant="default" size="sm" className="my-5 w-full">
-                  Proceed to buy
-                </Button>
-              </Link>
+              <Button variant="default" size="sm" className="my-5 w-full" onClick={proceedToBuy}>
+                Proceed to buy
+              </Button>
               <Table>
                 <TableCaption>A list of your selected items.</TableCaption>
                 <TableHeader>
