@@ -1,10 +1,11 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { GlobalContextProvider } from "@/contextWithDrivers/GlobalContext";
+import { Toaster } from "@/shadcn/components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/shadcn/components/ui/sonner";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <GlobalContextProvider>
       <html lang="en">
         <body className={`${inter.className} bg-[hsl(222.2,84%,4.9%)] min-h-screen flex flex-col`}>
+          <NextTopLoader color="white" initialPosition={0.4} crawlSpeed={0} height={3} showSpinner={false} easing="ease-in" speed={400} />
           <Navbar />
           {children}
           <Footer />
