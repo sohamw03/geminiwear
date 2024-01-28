@@ -2,7 +2,7 @@
 import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/shadcn/components/ui/dropdown-menu";
-import { Github, LifeBuoy, LogIn, LogOut, MoreHorizontal, Settings, User, UserRound, UserRoundPlus } from "lucide-react";
+import { History, Github, LifeBuoy, LogIn, LogOut, MoreHorizontal, User, UserRound, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 
 export default function Account() {
@@ -26,6 +26,14 @@ export default function Account() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        {user.loggedIn && (
+          <Link href={"/orders"}>
+            <DropdownMenuItem className="cursor-pointer">
+              <History className="mr-2 h-4 w-4" />
+              <span>Orders</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
         <Link href={"https://github.com/sohamw03"} target="_blank">
           <DropdownMenuItem className="cursor-pointer">
             <Github className="mr-2 h-4 w-4" />

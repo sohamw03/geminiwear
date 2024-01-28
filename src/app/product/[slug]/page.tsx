@@ -1,26 +1,32 @@
-import ProductModel from "../../../../models/Product";
+import connectDb from "@/middleware/mongoose";
+import Product from "../../../../models/Product";
 import { AddToCartBtn, PincodeForm, SizeColorChooser } from "../../../components/ProductPageComponents";
 
-async function prefetch(slug: string) {
-  const product = await ProductModel.findOne({ slug });
+async function prefetch(slugstr: string) {
+  try {
+    connectDb();
+    const product = await Product.findOne({ slug: slugstr });
 
-  return JSON.parse(
-    JSON.stringify({
-      _id: product._id,
-      title: product.title,
-      slug: product.slug,
-      desc: product.desc,
-      img: product.img,
-      category: product.category,
-      size: product.size,
-      color: product.color,
-      price: product.price,
-      availableQty: product.availableQty,
-    })
-  );
+    return JSON.parse(
+      JSON.stringify({
+        _id: product._id,
+        title: product.title,
+        slug: product.slug,
+        desc: product.desc,
+        img: product.img,
+        category: product.category,
+        size: product.size,
+        color: product.color,
+        price: product.price,
+        availableQty: product.availableQty,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-export default async function Product({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = await prefetch(params.slug);
 
   return (

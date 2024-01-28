@@ -8,6 +8,7 @@ async function connectDb() {
   try {
     await mongoose.connect(`${process.env.MONGODB_URI}/geminiwear-database`);
     console.log("MongoDB Connected");
+    mongoose.set("debug", true);
   } catch (error) {
     console.log("MongoDB Connection Error", error);
   }
