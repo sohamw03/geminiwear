@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Account from "./Account";
+import Account from "./AccountDropdown";
 import Cart from "./Cart";
 
 export default function Navbar() {

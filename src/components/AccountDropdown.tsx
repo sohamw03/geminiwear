@@ -20,10 +20,12 @@ export default function Account() {
         <DropdownMenuLabel>{user.loggedIn ? user.name : "Geminiwear"}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="cursor-pointer">
-            <User className="mr-2 h-4 w-4" />
-            <span>Account</span>
-          </DropdownMenuItem>
+          <Link href={"/myaccount"}>
+            <DropdownMenuItem className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              <span>Account</span>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         {user.loggedIn && (

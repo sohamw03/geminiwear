@@ -44,6 +44,8 @@ export default function Orders() {
                         {"cart[_id].title"} ({"cart[_id].size"}) ({"cart[_id].color"})
                       </span>
                     </TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
