@@ -27,6 +27,7 @@ export interface Values {
   logout: () => void;
   isCartOpen: boolean;
   setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  getUser: () => any;
 }
 
 export interface addRemoveItemData {
@@ -133,6 +134,30 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     clearCart();
   };
 
+  // Get user data
+  const getUser = async () => {
+    try {
+      const response = await fetch("/api/auth/getuser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        setUser(() => ({ ...responseJson.user, loggedIn: true }));
+        return { ...responseJson.user, loggedIn: true };
+      } else {
+        setUser(() => ({ loggedIn: false }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return {};
+  };
+
   // Load cart from local storage on reload
   useEffect(() => {
     try {
@@ -164,6 +189,7 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
     logout,
     isCartOpen,
     setIsCartOpen,
+    getUser,
   };
 
   return <globalContext.Provider value={values}>{children}</globalContext.Provider>;

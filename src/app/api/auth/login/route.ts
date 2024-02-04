@@ -11,7 +11,7 @@ export const POST = async (req: Request) => {
   try {
     const existingUser = await User.findOne({ email: email });
     if (existingUser && existingUser.validPassword(password)) {
-      const token = jwt.sign({ name: existingUser.name, email: existingUser.email }, process.env.JWT_SECRET as jwt.Secret, { expiresIn: "1d" });
+      const token = jwt.sign({ name: existingUser.name, email: existingUser.email, address: existingUser.address }, process.env.JWT_SECRET as jwt.Secret, { expiresIn: "1d" });
 
       return NextResponse.json({ success: true, message: `user login successful`, data: { name: existingUser.name, email, token } }, { status: 200 });
     } else {

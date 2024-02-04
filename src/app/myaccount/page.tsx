@@ -1,5 +1,6 @@
 "use client";
 
+import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
 import { Input } from "@/shadcn/components/ui/input";
@@ -7,37 +8,62 @@ import { Label } from "@/shadcn/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { Textarea } from "@/shadcn/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function MyAccount() {
+  // Global context
+  const { user, getUser } = useGlobal();
+
+  // Local context
+  const [address, setAddress] = useState("");
+
   const router = useRouter();
 
   // Form validation
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, tab: "address") => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     console.log(Object.fromEntries(formData.entries()));
-    const payload = {};
-    // try {
-    //   const response = await fetch("/api/user", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(payload),
-    //   });
-    //   const responseJson = await response.json();
 
-    //   if (responseJson.success && response.ok) {
-    //     toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
-    //     setTimeout(() => {
-    //       router.push("/login");
-    //     }, 2000);
-    //   } else {
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    let payload = {};
+    switch (tab) {
+      case "address":
+        payload = {
+          address: `${formData.get("address")}`,
+        };
+        break;
+    }
+
+    try {
+      const response = await fetch("/api/auth/updateuser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(payload),
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        toast.success(`Address updated successfully!`, { position: "bottom-center" });
+      } else {
+        toast.error(`Error updating address. Please try again later.`, { position: "bottom-center" });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    const call = async () => {
+      const userData = await getUser();
+      console.log(userData);
+      setAddress(userData.address || "");
+    };
+    call();
+  }, []);
 
   return (
     <main>
@@ -99,14 +125,22 @@ export default function MyAccount() {
                   <CardTitle>Address</CardTitle>
                   <CardDescription>Enter the address you want your products to ship to. Click save when you're done.</CardDescription>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
+                <form
+                  onSubmit={(e) => {
+                    handleSubmit(e, "address");
+                  }}>
                   <CardContent className="space-y-2">
                     <div className="space-y-1">
-                      <Textarea name="address" className="focus-visible:ring-white" id="name" defaultValue="" required autoFocus />
-                    </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="username">Pincode</Label>
-                      <Input name="pincode" className="focus-visible:ring-white" id="username" defaultValue="" required />
+                      <Textarea
+                        name="address"
+                        className="focus-visible:ring-white"
+                        id="name"
+                        value={address}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                          setAddress(e.target.value);
+                        }}
+                        required
+                      />
                     </div>
                   </CardContent>
                   <CardFooter>

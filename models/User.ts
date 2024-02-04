@@ -4,6 +4,7 @@ import crypto from "crypto";
 interface IUser extends Document {
   name: string;
   email: string;
+  address: string;
   setPassword: (password: string) => void;
   validPassword: (password: string) => boolean;
 }
