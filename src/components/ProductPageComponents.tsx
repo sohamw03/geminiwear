@@ -126,7 +126,7 @@ export function AddToCartBtn({ product }: any) {
     if (flag === 1 && quantity < product.availableQty) {
       setQuantity((q) => q + 1);
       addToCart({ ...product, size: size, color: color, qty: 1 });
-      toast.loading("Added an item to cart", {
+      toast.success("Added an item to cart", {
         description: `${product.title} added to cart`,
         position: "bottom-center",
       });

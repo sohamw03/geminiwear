@@ -12,6 +12,9 @@ import { RadioGroup, RadioGroupItem } from "@/shadcn/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
 import { Separator } from "@/shadcn/components/ui/separator";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -31,16 +34,20 @@ const formSchema = z.object({
 
 export default function Checkout() {
   // Global Context
-  const { cart, subTotal, addToCart, removeFromCart }: Values = useGlobal();
+  const { cart, subTotal, addToCart, removeFromCart, user }: Values = useGlobal();
+
+  const [orderData, setOrderData] = useState({});
+
+  const router = useRouter();
 
   // Form validation
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      name: `${user.name}`,
+      email: `${user.email}`,
       phoneNumber: "",
-      streetAddress: "",
+      streetAddress: `${user.address}`,
       city: "",
       stateProvince: "",
       postalCode: "",
@@ -49,8 +56,35 @@ export default function Checkout() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    const saveData = { ...data, address: `${data.streetAddress}, ${data.city}, ${data.stateProvince}, ${data.postalCode}, ${data.country}` };
+    setOrderData((prev) => ({ ...saveData, cart, subTotal }));
+  };
+
+  const handleCheckout = async () => {
+    if (Object.keys(orderData).length === 0) {
+      toast.error("Please fill the form to proceed.", { position: "bottom-center" });
+      return;
+    }
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(orderData),
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        toast.success("Order placed successfully.", { position: "bottom-center" });
+        router.push("/orders");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Handling cart items
@@ -285,7 +319,7 @@ export default function Checkout() {
                   </TableRow>
                 </TableFooter>
               </Table>
-              <Button variant={"default"} size={"lg"} className="w-full mt-8">
+              <Button variant={"default"} size={"lg"} className="w-full mt-8" onClick={handleCheckout}>
                 Confirm Order (₹{subTotal})
               </Button>
             </>

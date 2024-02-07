@@ -1,26 +1,33 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-let Order;
+interface IOrder extends Document {
+  userId: string;
+  products: Array<any>;
+  address: string;
+  amount: number;
+  paymentMethod: string;
+  phoneNumber: string;
+  status: string;
+}
+
+let Order: mongoose.Model<IOrder>;
 
 try {
-  Order = mongoose.model("Order");
+  Order = mongoose.model<IOrder>("Order");
 } catch (error) {
   const OrderSchema = new mongoose.Schema(
     {
       userId: { type: String, require: true },
-      products: [
-        {
-          productId: { type: String },
-          quantity: { type: Number, default: 1 },
-        },
-      ],
+      products: { type: Array, require: true },
       address: { type: String, require: true },
       amount: { type: Number, require: true },
+      paymentMethod: { type: String, require: true },
+      phoneNumber: { type: String, require: true },
       status: { type: String, default: "pending", require: true },
     },
     { timestamps: true }
   );
-  Order = mongoose.model("Order", OrderSchema);
+  Order = mongoose.model<IOrder>("Order", OrderSchema);
 }
 
 export default Order;

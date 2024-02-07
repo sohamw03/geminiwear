@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 
 export default function Cart() {
   // Global context
-  const { cart, addToCart, removeFromCart, clearCart, subTotal, user, isCartOpen, setIsCartOpen }: Values = useGlobal();
+  const { cart, addToCart, removeFromCart, clearCart, subTotal, user, isCartOpen, setIsCartOpen, getUser }: Values = useGlobal();
 
   const [totalItems, setTotalItems] = useState(0);
 
@@ -31,6 +31,7 @@ export default function Cart() {
   const proceedToBuy = () => {
     if (user.loggedIn) {
       setIsCartOpen(false);
+      getUser();
       router.push("/checkout");
     } else {
       setIsCartOpen(false);
