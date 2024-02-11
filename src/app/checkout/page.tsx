@@ -80,7 +80,7 @@ export default function Checkout() {
 
       if (responseJson.success && response.ok) {
         toast.success("Order placed successfully.", { position: "bottom-center" });
-        router.push("/orders");
+        router.push("/order");
       }
     } catch (error) {
       console.log(error);

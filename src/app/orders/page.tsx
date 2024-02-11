@@ -1,8 +1,7 @@
 "use client";
-import { Button } from "@/shadcn/components/ui/button";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shadcn/components/ui/popover";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
+import { useEffect, useState } from "react";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -37,12 +36,11 @@ export default function Orders() {
         <div className="flex flex-col gap-4 container px-5 py-12 mx-auto max-w-3xl xl:max-w-5xl">
           <h1 className="text-2xl font-bold">Your orders</h1>
           {orders.map((order: any, index) => (
-            <div className="rounded-md border">
+            <div key={index} className="rounded-xl border overflow-hidden">
               <Table>
                 <TableHeader className="bg-muted/50">
                   <TableRow>
-                    <TableHead className="w-24"></TableHead>
-                    <TableHead className="py-4">
+                    <TableHead className="py-4 w-32">
                       <div className="flex flex-col">
                         <span>Order Placed</span>
                         <span className="text-white">{new Date(order.updatedAt).toLocaleDateString()}</span>
@@ -54,20 +52,26 @@ export default function Orders() {
                         <span className="text-white">₹ {order.amount}</span>
                       </div>
                     </TableHead>
-                    <TableHead className="py-4">
+                    <TableHead className="py-4 w-36">
                       <div className="flex flex-col">
                         <span>Ship To</span>
-                        <span className="text-white">{order.address.substr(0, 10)}...</span>
+                        <span className="text-white">
+                          <Popover>
+                            <PopoverTrigger className="text-left underline">{order.address.substr(0, 25)}...</PopoverTrigger>
+                            <PopoverContent className="whitespace-pre-line">{order.address}</PopoverContent>
+                          </Popover>
+                        </span>
                       </div>
                     </TableHead>
+                    <TableHead className="w-0"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {/* Items in the cart */}
-                  {order.products.map((item: any, index: number) => (
-                    <TableRow key={index}>
+                  {/* Products in the order */}
+                  {order.products.map((item: any, jndex: number) => (
+                    <TableRow key={jndex}>
                       <TableCell className="w-24">
-                        <img src={item.img} width={180} height={180} alt={item.slug}></img>
+                        <img src={item.img} className="rounded-sm" width={180} height={180} alt={item.slug}></img>
                       </TableCell>
                       <TableCell className="font-medium flex flex-col gap-2">
                         <span>

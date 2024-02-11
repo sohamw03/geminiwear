@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
     }
     const userData: any = jwt.decode(token);
     const user = await User.findOne({ email: userData.email });
-    ordersData = await Order.find({ userId: user?._id });
+    ordersData = await Order.find({ userId: user?._id }).sort({ createdAt: -1 });
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }
