@@ -16,7 +16,7 @@ export function PincodeForm() {
     const pincode = e.currentTarget.pincode.value;
     console.log(pincode);
     if (pincode.length === 6) {
-      const pins = await fetch(`http://localhost:3000/api/pincode?p=${pincode}`, { method: "GET" });
+      const pins = await fetch(`/api/pincode?p=${pincode}`, { method: "GET" });
       const pinJson = await pins.json();
       if (pinJson.serviceablePincodes.includes(pincode)) {
         setServiceable(1);
