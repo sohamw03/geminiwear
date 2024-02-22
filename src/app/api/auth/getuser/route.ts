@@ -17,7 +17,16 @@ export const POST = async (req: Request) => {
     }
     const userDataToken: any = jwt.decode(token);
     const user = await User.findOne({ email: userDataToken.email });
-    userData = { name: user?.name, email: user?.email, address: user?.address };
+    userData = {
+      name: user?.name, //
+      email: user?.email,
+      phone: user?.phone,
+      address: user?.address,
+      city: user?.city,
+      state: user?.state,
+      postalCode: user?.postalCode,
+      country: user?.country,
+    };
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }

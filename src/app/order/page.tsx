@@ -4,7 +4,11 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { useEffect, useState } from "react";
 
 export default function Order() {
-  const [order, setOrder] = useState<any>({});
+  const [order, setOrder] = useState({
+    _id: "",
+    products: [],
+    amount: 0,
+  });
 
   // Get the order from the server
   const fetchOrders = async () => {
@@ -38,7 +42,7 @@ export default function Order() {
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <div className="lg:w-1/2 w-full lg:py-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-300 tracking-widest">GEMINIWEAR</h2>
-            <h1 className="text-gray-100 text-3xl title-font font-medium mb-1">Order ID : 92648</h1>
+            <h1 className="text-gray-100 text-3xl title-font font-medium mb-1">Order ID : {order._id.substring(0, 6)}</h1>
             <Table className="mt-2 rounded-md overflow-hidden">
               <TableHeader>
                 <TableRow>
@@ -49,7 +53,7 @@ export default function Order() {
               </TableHeader>
               <TableBody>
                 {/* Items in the cart */}
-                {order.products?.map((item: any, index: number) => (
+                {order.products.map((item: any, index: number) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium flex flex-col gap-2">
                       <span>
@@ -73,7 +77,7 @@ export default function Order() {
             </Button>
           </div>
           <div className="lg:w-1/2 lg:pl-10 mt-6 w-full lg:h-auto h-auto aspect-square rounded flex flex-wrap gap-2">
-            {order.products?.map((item: any, index: number) => {
+            {order.products.map((item: any, index: number) => {
               return <img key={index} alt="ecommerce" className={`object-cover rounded`} style={{ width: `calc(${100 / order.products.length}% - 0.5rem)` }} src={item.img} />;
             })}
           </div>

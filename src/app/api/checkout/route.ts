@@ -21,10 +21,10 @@ export const POST = async (req: Request) => {
     const order = new Order({
       userId: user?._id,
       products: Object.values(orderData.cart),
-      address: orderData.address,
+      address: orderData.user.address,
       amount: orderData.subTotal,
-      paymentMethod: orderData.paymentMethod,
-      phoneNumber: orderData.phoneNumber,
+      paymentMethod: "Comes from Razorpay response",
+      phoneNumber: orderData.user.phoneNumber,
     });
     console.log(order);
     order.save();

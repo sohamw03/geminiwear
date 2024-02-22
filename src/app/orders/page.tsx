@@ -57,7 +57,9 @@ export default function Orders() {
                         <span>Ship To</span>
                         <span className="text-white">
                           <Popover>
-                            <PopoverTrigger className="text-left underline">{order.address.substr(0, 25)}...</PopoverTrigger>
+                            <PopoverTrigger className="text-left underline">
+                              <span className="line-clamp-2">{order.address}</span>
+                            </PopoverTrigger>
                             <PopoverContent className="whitespace-pre-line">{order.address}</PopoverContent>
                           </Popover>
                         </span>

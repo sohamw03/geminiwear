@@ -5,6 +5,7 @@ import { Button } from "@/shadcn/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
 import { Input } from "@/shadcn/components/ui/input";
 import { Label } from "@/shadcn/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { Textarea } from "@/shadcn/components/ui/textarea";
 import { useRouter } from "next/navigation";
@@ -16,21 +17,44 @@ export default function MyAccount() {
   const { user, getUser } = useGlobal();
 
   // Local context
-  const [address, setAddress] = useState("");
+  const [account, setAccount] = useState({
+    name: "", //
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+  });
+  const [isEditable, setIsEditable] = useState(false);
 
   const router = useRouter();
 
   // Form validation
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, tab: "address") => {
+  const handleSubmit = async (e: React.MouseEvent, tab: "account" | "password" | "address") => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    console.log(Object.fromEntries(formData.entries()));
+    console.log(account);
 
     let payload = {};
     switch (tab) {
+      case "account":
+        payload = {
+          name: account.name,
+          email: account.email,
+          phone: account.phone,
+        };
+        break;
+      case "password":
+        return;
+        break;
       case "address":
         payload = {
-          address: `${formData.get("address")}`,
+          address: account.address,
+          city: account.city,
+          state: account.state,
+          postalCode: account.postalCode,
+          country: account.country,
         };
         break;
     }
@@ -47,10 +71,21 @@ export default function MyAccount() {
       const responseJson = await response.json();
 
       if (responseJson.success && response.ok) {
-        toast.success(`Address updated successfully!`, { position: "bottom-center" });
+        let msg = "";
+        switch (tab) {
+          case "account":
+            msg = "Account details updated successfully!";
+            break;
+          case "address":
+            msg = "Address updated successfully!";
+            break;
+        }
+
+        toast.success(msg, { position: "bottom-center" });
       } else {
-        toast.error(`Error updating address. Please try again later.`, { position: "bottom-center" });
+        toast.error(`Error updating data. Please try again later.`, { position: "bottom-center" });
       }
+      setIsEditable(false);
     } catch (error) {
       console.error(error);
     }
@@ -60,7 +95,16 @@ export default function MyAccount() {
     const call = async () => {
       const userData = await getUser();
       console.log(userData);
-      setAddress(userData.address || "");
+      setAccount({
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        address: userData.address,
+        city: userData.city,
+        state: userData.state,
+        postalCode: userData.postalCode,
+        country: userData.country,
+      });
     };
     call();
   }, []);
@@ -71,12 +115,14 @@ export default function MyAccount() {
         <div className="container px-5 py-12 mx-auto max-w-2xl xl:max-w-5xl">
           <h1 className="text-2xl text-white mb-8">Account Details</h1>
           {/* Account Information */}
-          <Tabs defaultValue="address" className="w-full">
+          <Tabs defaultValue="account" className="w-full">
             <TabsList>
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="password">Password</TabsTrigger>
               <TabsTrigger value="address">Address</TabsTrigger>
             </TabsList>
+
+            {/* Account */}
             <TabsContent value="account">
               <Card>
                 <CardHeader>
@@ -86,18 +132,54 @@ export default function MyAccount() {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" defaultValue="Pedro Duarte" />
+                    <Input
+                      name="name"
+                      className="focus-visible:ring-white"
+                      id="name"
+                      value={account.name}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, name: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="username">Username</Label>
-                    <Input id="username" defaultValue="@peduarte" />
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      name="email"
+                      className="focus-visible:ring-white"
+                      id="email"
+                      value={account.email}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, email: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      name="phone"
+                      className="focus-visible:ring-white"
+                      id="phone"
+                      value={account.phone}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, phone: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button>Save changes</Button>
+                <CardFooter className="flex flex-row gap-2">
+                  {isEditable && <Button onClick={(e) => handleSubmit(e, "account")}>Save changes</Button>}
+                  <Button onClick={() => setIsEditable(!isEditable)} variant={isEditable ? "destructive" : "default"}>
+                    {isEditable ? "Cancel" : "Edit"}
+                  </Button>
                 </CardFooter>
               </Card>
             </TabsContent>
+
+            {/* Password */}
             <TabsContent value="password">
               <Card>
                 <CardHeader>
@@ -119,34 +201,88 @@ export default function MyAccount() {
                 </CardFooter>
               </Card>
             </TabsContent>
+
+            {/* Address */}
             <TabsContent value="address">
               <Card>
                 <CardHeader>
                   <CardTitle>Address</CardTitle>
                   <CardDescription>Enter the address you want your products to ship to. Click save when you're done.</CardDescription>
                 </CardHeader>
-                <form
-                  onSubmit={(e) => {
-                    handleSubmit(e, "address");
-                  }}>
-                  <CardContent className="space-y-2">
-                    <div className="space-y-1">
-                      <Textarea
-                        name="address"
-                        className="focus-visible:ring-white"
-                        id="name"
-                        value={address}
-                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                          setAddress(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button type="submit">Save changes</Button>
-                  </CardFooter>
-                </form>
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="address">Street Address</Label>
+                    <Textarea
+                      name="address"
+                      className="focus-visible:ring-white"
+                      id="name"
+                      value={account.address}
+                      onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                        setAccount((prev) => ({ ...prev, address: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      name="city"
+                      className="focus-visible:ring-white"
+                      id="city"
+                      value={account.city}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, city: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      name="state"
+                      className="focus-visible:ring-white"
+                      id="state"
+                      value={account.state}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, state: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="postalCode">Postal Code</Label>
+                    <Input
+                      name="postalCode"
+                      className="focus-visible:ring-white"
+                      id="postalCode"
+                      value={account.postalCode}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setAccount((prev) => ({ ...prev, postalCode: e.target.value }));
+                      }}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="country">Country</Label>
+                    <Select onValueChange={(value) => setAccount((prev) => ({ ...prev, country: value }))} value={account.country} disabled={!isEditable}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your Country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="us">United States</SelectItem>
+                        <SelectItem value="ca">Canada</SelectItem>
+                        <SelectItem value="uk">United Kingdom</SelectItem>
+                        <SelectItem value="in">India</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-row gap-2">
+                  {isEditable && <Button onClick={(e) => handleSubmit(e, "address")}>Save changes</Button>}
+                  <Button onClick={() => setIsEditable(!isEditable)} variant={isEditable ? "destructive" : "default"}>
+                    {isEditable ? "Cancel" : "Edit"}
+                  </Button>
+                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>

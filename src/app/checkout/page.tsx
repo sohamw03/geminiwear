@@ -1,72 +1,35 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
 import { Values, addRemoveItemData, useGlobal } from "@/contextWithDrivers/GlobalContext";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shadcn/components/ui/accordion";
 import { Button } from "@/shadcn/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/shadcn/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
-import { Separator } from "@/shadcn/components/ui/separator";
+import { Label } from "@/shadcn/components/ui/label";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
+import { Textarea } from "@/shadcn/components/ui/textarea";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  phoneNumber: z.string(),
-  streetAddress: z.string(),
-  city: z.string(),
-  stateProvince: z.string(),
-  postalCode: z.string(),
-  country: z.string(),
-  paymentMethod: z.string(),
-});
 
 export default function Checkout() {
   // Global Context
-  const { cart, subTotal, addToCart, removeFromCart, user }: Values = useGlobal();
+  const { cart, subTotal, addToCart, removeFromCart, user, getUser, clearCart }: Values = useGlobal();
 
-  const [orderData, setOrderData] = useState({});
+  const [account, setAccount] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+  });
 
   const router = useRouter();
 
-  // Form validation
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: `${user.name}`,
-      email: `${user.email}`,
-      phoneNumber: "",
-      streetAddress: `${user.address}`,
-      city: "",
-      stateProvince: "",
-      postalCode: "",
-      country: "",
-      paymentMethod: "",
-    },
-  });
-
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
-    const saveData = { ...data, address: `${data.streetAddress}, ${data.city}, ${data.stateProvince}, ${data.postalCode}, ${data.country}` };
-    setOrderData((prev) => ({ ...saveData, cart, subTotal }));
-  };
-
   const handleCheckout = async () => {
-    if (Object.keys(orderData).length === 0) {
-      toast.error("Please fill the form to proceed.", { position: "bottom-center" });
-      return;
-    }
+    const checkoutPreferences = { user, cart, subTotal };
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -74,11 +37,12 @@ export default function Checkout() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(checkoutPreferences),
       });
       const responseJson = await response.json();
 
       if (responseJson.success && response.ok) {
+        clearCart();
         toast.success("Order placed successfully.", { position: "bottom-center" });
         router.push("/order");
       }
@@ -98,178 +62,70 @@ export default function Checkout() {
     removeFromCart(itemData);
   };
 
+  useEffect(() => {
+    const call = async () => {
+      const userData = await getUser();
+      console.log(userData);
+      setAccount({
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        address: userData.address,
+        city: userData.city,
+        state: userData.state,
+        postalCode: userData.postalCode,
+        country: userData.country,
+      });
+    };
+    call();
+  }, []);
+
   return (
     <main>
       <section className="text-white body-font dark bg-background">
         <div className="container px-5 py-12 mx-auto max-w-2xl xl:max-w-5xl">
           <h1 className="text-2xl mb-4 font-bold">Checkout</h1>
-          {/* 1. Your Information */}
-          <h2 className="text-lg mt-6 font-semibold">1. Your Information</h2>
-          <Separator className="mt-2 mb-6" />
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Name" {...field} autoFocus />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Phone Number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* 2. Shipping Address */}
-              <h2 className="text-lg !mt-8 font-semibold">2. Shipping Address</h2>
-              <Separator className="!my-2" />
-              <FormField
-                control={form.control}
-                name="streetAddress"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street Address</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Street Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="City" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="stateProvince"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>State/Province</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="State/Province" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="postalCode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Postal Code</FormLabel>
-                    <FormControl>
-                      <Input className="focus-visible:ring-white" placeholder="Postal Code" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your Country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="us">United States</SelectItem>
-                        <SelectItem value="ca">Canada</SelectItem>
-                        <SelectItem value="uk">United Kingdom</SelectItem>
-                        <SelectItem value="in">India</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* 3. Payment Information */}
-              <h2 className="text-lg !mt-8 font-semibold">3. Payment Information</h2>
-              <Separator className="!my-2" />
-              <FormField
-                control={form.control}
-                name="paymentMethod"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
-                        <FormItem className="flex items-center space-x-3 space-y-0 border h-16 rounded px-4">
-                          <FormControl>
-                            <RadioGroupItem value="credit" />
-                          </FormControl>
-                          <FormLabel className="font-normal h-full w-full flex items-center cursor-pointer">Credit Card</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0 border h-16 rounded px-4">
-                          <FormControl>
-                            <RadioGroupItem value="upi" />
-                          </FormControl>
-                          <FormLabel className="font-normal h-full w-full flex items-center cursor-pointer">UPI</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0 border h-16 rounded px-4">
-                          <FormControl>
-                            <RadioGroupItem value="cod" />
-                          </FormControl>
-                          <FormLabel className="font-normal h-full w-full flex items-center cursor-pointer">Cash On Delivery</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" size={"lg"} variant={"secondary"}>
-                Save
-              </Button>
-            </form>
-          </Form>
-          {/* 4. Order Summary */}
-          <h2 className="text-lg mt-8 font-semibold">4. Order Summary</h2>
-          <Separator className="my-2" />
+          <Accordion type="single">
+            {/* 1. Your Information */}
+            <AccordionItem value="item-1">
+              <AccordionTrigger>
+                <h2 className="text-lg font-semibold">1. Your Information</h2>
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-4 pt-2 pb-8">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" className="!opacity-75 !cursor-auto" placeholder="Name" disabled value={account.name} />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" className="!opacity-75 !cursor-auto" placeholder="Email" disabled value={account.email} />
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input id="phone" className="!opacity-75 !cursor-auto" placeholder="Phone Number" disabled value={account.phone} />
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* 2. Shipping Address */}
+            <AccordionItem value="item-2">
+              <AccordionTrigger>
+                <h2 className="text-lg font-semibold ">2. Shipping Address</h2>
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-4 py-2 pb-8">
+                <Label htmlFor="address">Street Address</Label>
+                <Textarea id="address" className="!opacity-75 !cursor-auto resize-none" placeholder="Street Address" disabled value={account.address} />
+                <Label htmlFor="city">City</Label>
+                <Input id="city" className="!opacity-75 !cursor-auto" placeholder="City" disabled value={account.city} />
+                <Label htmlFor="state">State/Province</Label>
+                <Input id="state" className="!opacity-75 !cursor-auto" placeholder="State/Province" disabled value={account.state} />
+                <Label htmlFor="postal">Postal Code</Label>
+                <Input id="postal" className="!opacity-75 !cursor-auto" placeholder="Postal Code" disabled value={account.postalCode} />
+                <Label htmlFor="country">Country</Label>
+                <Input id="country" className="!opacity-75 !cursor-auto" placeholder="Country" disabled value={account.country} />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* 3. Order Summary */}
+          <h2 className="text-lg my-4 font-semibold">3. Order Summary</h2>
           {/* Show cart when not empty */}
           {Object.keys(cart).length !== 0 ? (
-            <>
+            <div className="rounded-xl border overflow-hidden">
               <Table>
                 <TableCaption>A list of your selected items.</TableCaption>
                 <TableHeader>
@@ -319,10 +175,10 @@ export default function Checkout() {
                   </TableRow>
                 </TableFooter>
               </Table>
-              <Button variant={"default"} size={"lg"} className="w-full mt-8" onClick={handleCheckout}>
-                Confirm Order (₹{subTotal})
+              <Button variant={"default"} size={"lg"} className="w-full mt-4" onClick={handleCheckout}>
+                Confirm Order of&nbsp;<span className="font-bold">₹{subTotal}</span>
               </Button>
-            </>
+            </div>
           ) : (
             // Show this when cart is empty
             <div className="flex flex-col items-center justify-center h-full mt-16">

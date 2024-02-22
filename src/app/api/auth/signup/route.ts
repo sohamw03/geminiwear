@@ -13,7 +13,17 @@ export const POST = async (req: Request) => {
       throw new Error("User email already exists");
     }
 
-    const newUser = new User({ name, email, address: "" });
+    const newUser = new User({
+      name, //
+      email,
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+      cardDetails: "",
+    });
     newUser.setPassword(password);
     await newUser.save();
   } catch (error) {

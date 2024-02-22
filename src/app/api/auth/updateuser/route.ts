@@ -9,7 +9,7 @@ export const POST = async (req: Request) => {
   const authorizationHeader = req.headers.get("Authorization");
   const token = authorizationHeader?.split(" ")[1] as string;
 
-  const { address } = (await req.json()) as { address: string };
+  const payload = (await req.json()) as { address: string };
 
   try {
     if (!jwt.verify(token, process.env.JWT_SECRET as jwt.Secret)) {
@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
     }
     const userData: any = jwt.decode(token);
     let user = await User.findOne({ email: userData.email });
-    user?.set({ address: address });
+    user?.set({ ...payload });
     user?.save();
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
