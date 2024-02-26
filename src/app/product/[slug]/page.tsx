@@ -1,6 +1,7 @@
 import connectDb from "@/middleware/mongoose";
 import Product from "../../../../models/Product";
 import { AddToCartBtn, PincodeForm, SizeColorChooser } from "../../../components/ProductPageComponents";
+import GwImage from "@/lib/GwImage";
 
 async function prefetch(slugstr: string) {
   try {
@@ -33,7 +34,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
     <section className="text-gray-400 overflow-hidden dark bg-background">
       <div className="container px-5 py-24 mx-auto">
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
-          <img alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-contain object-center rounded" src={product.img} loading="lazy" />
+          <GwImage alt="ecommerce" className="lg:w-1/2 w-full lg:h-auto h-64 object-contain object-center rounded" src={product.img} />
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-300 tracking-widest">{product.category}</h2>
             <h1 className="text-gray-100 text-3xl title-font font-medium mb-1">{product.title}</h1>

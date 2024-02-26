@@ -24,7 +24,7 @@ try {
     {
       name: { type: String, require: true },
       email: { type: String, require: true, unique: true },
-      phone: { type: String, unique: true },
+      phone: { type: String },
       address: { type: String },
       city: { type: String },
       state: { type: String },

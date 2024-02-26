@@ -1,4 +1,5 @@
 "use client";
+import GwImage from "@/lib/GwImage";
 import { Button } from "@/shadcn/components/ui/button";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { useEffect, useState } from "react";
@@ -78,7 +79,7 @@ export default function Order() {
           </div>
           <div className="lg:w-1/2 lg:pl-10 mt-6 w-full lg:h-auto h-auto aspect-square rounded flex flex-wrap gap-2">
             {order.products.map((item: any, index: number) => {
-              return <img key={index} alt="ecommerce" className={`object-cover rounded`} style={{ width: `calc(${100 / order.products.length}% - 0.5rem)` }} src={item.img} />;
+              return <GwImage key={index} alt="ecommerce" className={`object-cover rounded w-full h-full`} style={{ width: `calc(${100 / order.products.length}% - 0.5rem)` }} src={item.img} />;
             })}
           </div>
         </div>

@@ -1,4 +1,5 @@
 "use client";
+import GwImage from "@/lib/GwImage";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shadcn/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { useEffect, useState } from "react";
@@ -73,7 +74,7 @@ export default function Orders() {
                   {order.products.map((item: any, jndex: number) => (
                     <TableRow key={jndex}>
                       <TableCell className="w-24">
-                        <img src={item.img} className="rounded-sm" width={180} height={180} alt={item.slug}></img>
+                        <GwImage src={item.img} className="w-[180px] aspect-square rounded-sm" alt={item.slug} />
                       </TableCell>
                       <TableCell className="font-medium flex flex-col gap-2">
                         <span>

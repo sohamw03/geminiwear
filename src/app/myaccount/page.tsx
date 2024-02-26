@@ -3,8 +3,10 @@
 import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/shadcn/components/ui/dialog";
 import { Input } from "@/shadcn/components/ui/input";
 import { Label } from "@/shadcn/components/ui/label";
+import { ScrollArea, ScrollBar } from "@/shadcn/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { Textarea } from "@/shadcn/components/ui/textarea";
@@ -28,11 +30,13 @@ export default function MyAccount() {
     country: "",
   });
   const [isEditable, setIsEditable] = useState(false);
+  const [isAccountDeleted, setIsAccountDeleted] = useState(false);
+  const [userTakeoutData, setUserTakeoutData] = useState({} as any);
 
   const router = useRouter();
 
   // Form validation
-  const handleSubmit = async (e: React.MouseEvent, tab: "account" | "password" | "address") => {
+  const handleSubmit = async (e: React.MouseEvent, tab: "account" | "password" | "address" | "security") => {
     e.preventDefault();
     console.log(account);
 
@@ -91,6 +95,36 @@ export default function MyAccount() {
     }
   };
 
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const confirmation = (e.target as HTMLFormElement).confirmation.value;
+    if (confirmation !== "delete-personal-account") {
+      toast.error("Confirmation code is incorrect. Please try again.", { position: "bottom-center" });
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/deleteuser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      const responseJson = await response.json();
+
+      if (responseJson.success && response.ok) {
+        toast.success("Account deleted successfully! Please find your data below.", { position: "bottom-center" });
+        setIsAccountDeleted(true);
+        setUserTakeoutData(responseJson.data);
+      } else {
+        toast.error(`Error deleting account. Please try again later.`, { position: "bottom-center" });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const call = async () => {
       const userData = await getUser();
@@ -120,6 +154,7 @@ export default function MyAccount() {
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="password">Password</TabsTrigger>
               <TabsTrigger value="address">Address</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
 
             {/* Account */}
@@ -283,6 +318,47 @@ export default function MyAccount() {
                     {isEditable ? "Cancel" : "Edit"}
                   </Button>
                 </CardFooter>
+              </Card>
+            </TabsContent>
+
+            {/* Security */}
+            <TabsContent value="security">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Delete my account</CardTitle>
+                  <CardDescription>Delete your account and get all the data.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {isAccountDeleted && ( //
+                    <ScrollArea className="whitespace-nowrap bg-inherit p-4 rounded-lg border">
+                      <pre>{JSON.stringify(userTakeoutData, null, 2)}</pre>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  )}
+                  <Dialog open={isAccountDeleted ? false : undefined}>
+                    <DialogTrigger asChild>{!isAccountDeleted && <Button variant={"destructive"}>Delete Account</Button>}</DialogTrigger>
+                    <DialogContent className="text-white">
+                      <DialogHeader>
+                        <DialogTitle>Delete Account</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleDeleteAccount} id="deleteAccountForm">
+                        <Label htmlFor="confirmation" className="text-muted-foreground">
+                          Please type <span className="font-bold">delete-personal-account</span> to confirm the deletion of account.
+                        </Label>
+                        <Input id="confirmation" type="text" name="confirmation" className="focus-visible:ring-white text-inherit w-full mt-2" />
+                      </form>
+                      <DialogFooter className="flex flex-row !justify-between">
+                        <DialogClose asChild>
+                          <Button variant={"secondary"}>Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" form="deleteAccountForm" variant={"destructive"}>
+                          Delete Account
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </CardContent>
+                <CardFooter className="flex flex-row gap-2"></CardFooter>
               </Card>
             </TabsContent>
           </Tabs>

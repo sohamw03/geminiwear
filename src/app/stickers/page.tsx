@@ -1,6 +1,7 @@
 import connectDb from "@/middleware/mongoose";
 import Link from "next/link";
 import Product from "../../../models/Product";
+import GwImage from "@/lib/GwImage";
 
 const preload = async () => {
   await connectDb();
@@ -21,7 +22,7 @@ export default async function Stickers() {
             {stickers.map((sticker, index) => (
               <div className="lg:w-1/4 md:w-1/2 p-4 w-full hover:bg-slate-900 transition-all rounded-lg" key={sticker._id}>
                 <Link href={`/product/${sticker.slug}`} className="block relative h-48 rounded overflow-hidden">
-                  <img alt="ecommerce" className="object-contain object-center w-full h-full block" src={sticker.img} />
+                  <GwImage alt="ecommerce" className="object-contain object-center w-full h-full block" src={sticker.img} />
                 </Link>
                 <div className="mt-4">
                   <h3 className="text-xs tracking-widest title-font mb-1">{sticker.category}</h3>
