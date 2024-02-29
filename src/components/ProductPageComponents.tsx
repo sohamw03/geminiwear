@@ -7,32 +7,41 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import LoadingSpinner from "./LoadingSpinner";
 
 export function PincodeForm() {
   const [serviceable, setServiceable] = useState(-1);
+  const [loadingStates, setLoadingStates] = useState({ pincode: false });
 
   const handlePincode = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoadingStates({ ...loadingStates, pincode: true });
     e.preventDefault();
     const pincode = e.currentTarget.pincode.value;
     console.log(pincode);
-    if (pincode.length === 6) {
-      const pins = await fetch(`/api/pincode?p=${pincode}`, { method: "GET" });
-      const pinJson = await pins.json();
-      if (pinJson.serviceablePincodes.includes(pincode)) {
-        setServiceable(1);
-        toast.success("Item is Deliverable to your location.", {
-          position: "bottom-center",
-        });
+    try {
+      if (pincode.length === 6) {
+        const pins = await fetch(`/api/pincode?p=${pincode}`, { method: "GET" });
+        const pinJson = await pins.json();
+        if (pinJson.serviceablePincodes.includes(pincode)) {
+          setServiceable(1);
+          toast.success("Item is Deliverable to your location.", {
+            position: "bottom-center",
+          });
+        } else {
+          setServiceable(0);
+          toast.error("Sorry! this item is not deliverable to your location.", {
+            position: "bottom-center",
+          });
+        }
       } else {
-        setServiceable(0);
-        toast.error("Sorry! this item is not deliverable to your location.", {
+        toast.info("Please enter a valid pincode.", {
           position: "bottom-center",
         });
       }
-    } else {
-      toast.info("Please enter a valid pincode.", {
-        position: "bottom-center",
-      });
+    } catch {
+      console.error("Error in fetching pincode data");
+    } finally {
+      setLoadingStates({ ...loadingStates, pincode: false });
     }
   };
 
@@ -40,8 +49,8 @@ export function PincodeForm() {
     <form className="flex flex-col border-b-2 mb-5 pb-5 gap-2" onSubmit={handlePincode}>
       <div className="flex flex-row gap-2">
         <Input type="text" name="pincode" placeholder="Enter Delivery Pincode" className="max-w-xs" />
-        <Button variant={"secondary"} type="submit">
-          Check
+        <Button variant={"secondary"} type="submit" className="w-16" disabled={loadingStates.pincode}>
+          {loadingStates.pincode ? <LoadingSpinner /> : "Check"}
         </Button>
       </div>
     </form>
@@ -114,6 +123,7 @@ export function AddToCartBtn({ product }: any) {
 
   // Local states
   const [quantity, setQuantity] = useState(0);
+  const [loadingState, setLoadingState] = useState(false);
 
   // Search params for size and color
   const params = useSearchParams();
@@ -138,12 +148,16 @@ export function AddToCartBtn({ product }: any) {
   };
 
   const handleBuyNow = () => {
-    if (user.loggedIn) {
-      buyNow({ ...product, size: size, color: color, qty: 1 });
-      router.push("/checkout");
-    } else {
-      router.push("/login");
-    }
+    setLoadingState(true);
+
+    setTimeout(() => {
+      if (user.loggedIn) {
+        buyNow({ ...product, size: size, color: color, qty: 1 });
+        router.push("/checkout");
+      } else {
+        router.push("/login");
+      }
+    }, 1000);
   };
 
   useEffect(() => {
@@ -154,8 +168,8 @@ export function AddToCartBtn({ product }: any) {
 
   return (
     <>
-      <Button variant={"default"} className="ml-auto w-[calc(6.2rem+3ch)]" onClick={handleBuyNow}>
-        Buy Now
+      <Button variant={"default"} className="ml-auto w-[calc(6.2rem+3ch)]" onClick={handleBuyNow} disabled={loadingState}>
+        {loadingState ? <LoadingSpinner /> : "Buy Now"}
       </Button>
       {quantity === 0 ? (
         <Button variant={"default"} className="ml-4 w-[calc(6.2rem+3ch)]" onClick={() => handleAddRemToCart(1)}>

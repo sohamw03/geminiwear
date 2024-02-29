@@ -4,15 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Checkbox } from "@/shadcn/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
-import Link from "next/link";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { jwtDecode } from "jwt-decode";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -33,6 +35,9 @@ export default function Login() {
   // Global context
   const { setUser } = useGlobal();
 
+  // Login context
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   // Form validation
@@ -46,6 +51,7 @@ export default function Login() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading(true);
     console.log(data);
     const payload = {
       email: data.email,
@@ -77,6 +83,7 @@ export default function Login() {
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -133,8 +140,8 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" variant={"default"} className="mt-4 w-full">
-                Login
+              <Button type="submit" variant={"default"} className="mt-4 w-full" disabled={loading}>
+                {loading ? <LoadingSpinner /> : "Login"}
               </Button>
             </form>
           </Form>

@@ -9,6 +9,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/shadcn/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const formSchema = z
   .object({
@@ -33,7 +35,11 @@ const formSchema = z
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
+
 export default function Signup() {
+  // Local state
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   // Form validation
@@ -49,6 +55,7 @@ export default function Signup() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading(true);
     console.log(data);
     const payload = { ...data, name: `${data.firstName} ${data.lastName}`.trim() };
     try {
@@ -72,6 +79,8 @@ export default function Signup() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,8 +157,8 @@ export default function Signup() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" variant={"default"} className="mt-4 w-full">
-                Signup
+              <Button type="submit" variant={"default"} className="mt-4 w-full" disabled={loading}>
+                {loading ? <LoadingSpinner /> : "Signup"}
               </Button>
             </form>
           </Form>

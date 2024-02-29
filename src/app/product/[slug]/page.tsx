@@ -7,7 +7,6 @@ async function prefetch(slugstr: string) {
   try {
     connectDb();
     const product = await Product.findOne({ slug: slugstr });
-
     return JSON.parse(
       JSON.stringify({
         _id: product._id,

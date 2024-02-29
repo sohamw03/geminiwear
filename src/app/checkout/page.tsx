@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { Values, addRemoveItemData, useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shadcn/components/ui/accordion";
 import { Button } from "@/shadcn/components/ui/button";
@@ -15,6 +16,8 @@ export default function Checkout() {
   // Global Context
   const { cart, subTotal, addToCart, removeFromCart, user, getUser, clearCart }: Values = useGlobal();
 
+  // Local state
+  const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState({
     name: "",
     email: "",
@@ -29,6 +32,7 @@ export default function Checkout() {
   const router = useRouter();
 
   const handleCheckout = async () => {
+    setLoading(true);
     const checkoutPreferences = { user, cart, subTotal };
     try {
       const response = await fetch("/api/checkout", {
@@ -48,6 +52,7 @@ export default function Checkout() {
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -175,8 +180,14 @@ export default function Checkout() {
                   </TableRow>
                 </TableFooter>
               </Table>
-              <Button variant={"default"} size={"lg"} className="w-full mt-4" onClick={handleCheckout}>
-                Confirm Order of&nbsp;<span className="font-bold">₹{subTotal}</span>
+              <Button variant={"default"} size={"lg"} className="w-full mt-4" onClick={handleCheckout} disabled={loading}>
+                {loading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <>
+                    Confirm Order of&nbsp;<span className="font-bold">₹{subTotal}</span>
+                  </>
+                )}
               </Button>
             </div>
           ) : (

@@ -6,15 +6,16 @@ import { ScrollArea } from "@/shadcn/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/shadcn/components/ui/sheet";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { ShoppingCart } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function Cart() {
   // Global context
   const { cart, addToCart, removeFromCart, clearCart, subTotal, user, isCartOpen, setIsCartOpen, getUser }: Values = useGlobal();
 
   const [totalItems, setTotalItems] = useState(0);
+  const [loadingStates, setLoadingStates] = useState({ proceedToBuy: false });
 
   const router = useRouter();
 
@@ -29,6 +30,7 @@ export default function Cart() {
   };
 
   const proceedToBuy = () => {
+    setLoadingStates({ ...loadingStates, proceedToBuy: true });
     if (user.loggedIn) {
       setIsCartOpen(false);
       getUser();
@@ -37,6 +39,9 @@ export default function Cart() {
       setIsCartOpen(false);
       router.push("/login");
     }
+    setTimeout(() => {
+      setLoadingStates({ ...loadingStates, proceedToBuy: false });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -70,8 +75,8 @@ export default function Cart() {
           {/* Show cart when not empty */}
           {Object.keys(cart).length !== 0 ? (
             <>
-              <Button variant="default" size="sm" className="my-5 w-full" onClick={proceedToBuy}>
-                Proceed to buy
+              <Button variant="default" size="sm" className="my-5 w-full" onClick={proceedToBuy} disabled={loadingStates.proceedToBuy}>
+                {loadingStates.proceedToBuy ? <LoadingSpinner /> : "Proceed to Buy"}
               </Button>
               <Table>
                 <TableCaption>A list of your selected items.</TableCaption>

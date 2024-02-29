@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
@@ -32,11 +33,13 @@ export default function MyAccount() {
   const [isEditable, setIsEditable] = useState(false);
   const [isAccountDeleted, setIsAccountDeleted] = useState(false);
   const [userTakeoutData, setUserTakeoutData] = useState({} as any);
+  const [loadingStates, setLoadingStates] = useState({ saveData: false, deleteAccount: false });
 
   const router = useRouter();
 
   // Form validation
   const handleSubmit = async (e: React.MouseEvent, tab: "account" | "password" | "address" | "security") => {
+    setLoadingStates((prev) => ({ ...prev, saveData: true }));
     e.preventDefault();
     console.log(account);
 
@@ -92,6 +95,8 @@ export default function MyAccount() {
       setIsEditable(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, saveData: false }));
     }
   };
 
@@ -206,7 +211,11 @@ export default function MyAccount() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-row gap-2">
-                  {isEditable && <Button onClick={(e) => handleSubmit(e, "account")}>Save changes</Button>}
+                  {isEditable && (
+                    <Button className="w-[7.82rem]" onClick={(e) => handleSubmit(e, "account")} disabled={loadingStates.saveData}>
+                      {loadingStates.saveData ? <LoadingSpinner /> : "Save changes"}
+                    </Button>
+                  )}
                   <Button onClick={() => setIsEditable(!isEditable)} variant={isEditable ? "destructive" : "default"}>
                     {isEditable ? "Cancel" : "Edit"}
                   </Button>
@@ -313,7 +322,11 @@ export default function MyAccount() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-row gap-2">
-                  {isEditable && <Button onClick={(e) => handleSubmit(e, "address")}>Save changes</Button>}
+                  {isEditable && (
+                    <Button className="w-[7.82rem]" onClick={(e) => handleSubmit(e, "address")} disabled={loadingStates.saveData}>
+                      {loadingStates.saveData ? <LoadingSpinner /> : "Save changes"}
+                    </Button>
+                  )}
                   <Button onClick={() => setIsEditable(!isEditable)} variant={isEditable ? "destructive" : "default"}>
                     {isEditable ? "Cancel" : "Edit"}
                   </Button>
@@ -329,14 +342,22 @@ export default function MyAccount() {
                   <CardDescription>Delete your account and get all the data.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
+                  {/* User Data */}
                   {isAccountDeleted && ( //
                     <ScrollArea className="whitespace-nowrap bg-inherit p-4 rounded-lg border">
                       <pre>{JSON.stringify(userTakeoutData, null, 2)}</pre>
                       <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   )}
+                  {/* Delete Account */}
                   <Dialog open={isAccountDeleted ? false : undefined}>
-                    <DialogTrigger asChild>{!isAccountDeleted && <Button variant={"destructive"}>Delete Account</Button>}</DialogTrigger>
+                    <DialogTrigger asChild>
+                      {!isAccountDeleted && (
+                        <Button variant={"destructive"} disabled={loadingStates.deleteAccount}>
+                          {loadingStates.deleteAccount ? "Deleting..." : "Delete Account"}
+                        </Button>
+                      )}
+                    </DialogTrigger>
                     <DialogContent className="text-white">
                       <DialogHeader>
                         <DialogTitle>Delete Account</DialogTitle>
