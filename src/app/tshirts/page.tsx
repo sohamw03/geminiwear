@@ -1,8 +1,7 @@
-import connectDb from "@/middleware/mongoose";
-import Product from "../../../models/Product";
-import Link from "next/link";
-import Image from "next/image";
 import GwImage from "@/lib/GwImage";
+import connectDb from "@/middleware/mongoose";
+import Link from "next/link";
+import Product from "../../../models/Product";
 
 const preload = async () => {
   await connectDb();

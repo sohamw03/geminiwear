@@ -23,7 +23,7 @@ export default function Order() {
       });
       const responseJson = await response.json();
 
-      if (responseJson.success && response.ok) {
+      if (responseJson.success && response.ok && responseJson.orders[0]) {
         console.log(responseJson.orders);
         setOrder(responseJson.orders[0]);
       }

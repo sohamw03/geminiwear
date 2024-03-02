@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 interface IOrder extends Document {
   userId: string;
@@ -8,6 +8,8 @@ interface IOrder extends Document {
   paymentMethod: string;
   phoneNumber: string;
   status: string;
+  razorpayPaymentId: string;
+  razorpayOrderId: string;
 }
 
 let Order: mongoose.Model<IOrder>;
@@ -24,6 +26,8 @@ try {
       paymentMethod: { type: String, require: true },
       phoneNumber: { type: String, require: true },
       status: { type: String, default: "pending", require: true },
+      razorpayPaymentId: { type: String },
+      razorpayOrderId: { type: String },
     },
     { timestamps: true }
   );

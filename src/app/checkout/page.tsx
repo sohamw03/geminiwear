@@ -8,9 +8,8 @@ import { Input } from "@/shadcn/components/ui/input";
 import { Label } from "@/shadcn/components/ui/label";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
 import { Textarea } from "@/shadcn/components/ui/textarea";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { RenderRazorpay } from "./useRenderRazorpay";
 
 export default function Checkout() {
   // Global Context
@@ -18,6 +17,8 @@ export default function Checkout() {
 
   // Local state
   const [loading, setLoading] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<any>();
+  const [displayRazorpay, setDisplayRazorpay] = useState(false);
   const [account, setAccount] = useState({
     name: "",
     email: "",
@@ -29,11 +30,8 @@ export default function Checkout() {
     country: "",
   });
 
-  const router = useRouter();
-
   const handleCheckout = async () => {
     setLoading(true);
-    const checkoutPreferences = { user, cart, subTotal };
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
@@ -41,19 +39,26 @@ export default function Checkout() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(checkoutPreferences),
+        body: JSON.stringify({
+          type: "createorder",
+          amount: subTotal * 100, // Converting to lowest currency unit
+          currency: "INR",
+        }),
       });
       const responseJson = await response.json();
 
-      if (responseJson.success && response.ok) {
-        clearCart();
-        toast.success("Order placed successfully.", { position: "bottom-center" });
-        router.push("/order");
+      if (responseJson.success && response.ok && responseJson.data.order_id) {
+        setOrderDetails(() => ({
+          orderId: responseJson.data.order_id,
+          amount: responseJson.data.amount,
+          currency: responseJson.data.currency,
+        }));
+        setDisplayRazorpay(true);
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // Handling cart items
@@ -199,6 +204,15 @@ export default function Checkout() {
           )}
         </div>
       </section>
+      {orderDetails && displayRazorpay && (
+        <RenderRazorpay //
+          amount={orderDetails.amount}
+          currency={orderDetails.currency}
+          orderId={orderDetails.orderId}
+          keyId={process.env.NEXT_PUBLIC_RAZORPAY_TEST_KEY_ID as string}
+          keySecret={process.env.NEXT_PUBLIC_RAZORPAY_TEST_KEY_SECRET as string}
+        />
+      )}
     </main>
   );
 }
