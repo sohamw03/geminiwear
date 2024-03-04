@@ -18,7 +18,6 @@ export default function Order() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
       const responseJson = await response.json();

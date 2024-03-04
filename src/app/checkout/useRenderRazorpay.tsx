@@ -22,7 +22,6 @@ export function RenderRazorpay({ orderId, keyId, keySecret, currency, amount }: 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
         },
         body: JSON.stringify({
           type: "successpayment",

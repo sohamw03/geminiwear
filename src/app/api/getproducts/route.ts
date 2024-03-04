@@ -5,10 +5,15 @@ import connectDb from "@/middleware/mongoose";
 export const POST = async (req: Request) => {
   await connectDb();
 
-  const { slug } = await req.json();
+  const payload = await req.json();
+  let products: Array<any> = [];
 
   try {
-    const products = await Product.find();
+    if (payload.slug) {
+      products[0] = await Product.findOne({ slug: payload.slug });
+    } else {
+      products = await Product.find();
+    }
     return NextResponse.json({ success: true, products }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });

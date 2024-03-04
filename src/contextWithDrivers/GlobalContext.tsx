@@ -129,7 +129,7 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
 
   // Auth logout
   const logout = () => {
-    localStorage.removeItem("token");
+    
     setUser(() => ({ loggedIn: false }));
     clearCart();
   };
@@ -141,7 +141,6 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
       const responseJson = await response.json();
@@ -162,7 +161,9 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     try {
       const data = localStorage.getItem("cart");
-      const token = localStorage.getItem("token");
+      const match = document.cookie.match("(^|;)\\s*" + "token" + "\\s*=\\s*([^;]+)");
+      const token = match ? match.pop() : "";
+
       if (token) {
         setUser(() => ({ ...jwtDecode(token), loggedIn: true }));
       }

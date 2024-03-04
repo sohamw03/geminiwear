@@ -1,24 +1,32 @@
 import connectDb from "@/middleware/mongoose";
-import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../../models/User";
+import { decodeJwt } from "jose";
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const authorizationHeader = req.headers.get("Authorization");
-  const token = authorizationHeader?.split(" ")[1] as string;
+  const token = req.cookies.get("token")?.value as string;
 
-  const payload = (await req.json()) as { address: string };
+  const payload: any = await req.json();
 
   try {
-    if (!jwt.verify(token, process.env.JWT_SECRET as jwt.Secret)) {
-      return NextResponse.json({ success: false, error: "No token provided" }, { status: 401 });
-    }
-    const userData: any = jwt.decode(token);
+    const userData: any = await decodeJwt(token);
     let user = await User.findOne({ email: userData.email });
-    user?.set({ ...payload });
-    user?.save();
+    if (user) {
+      const { phone, address, city, state, postalCode, country } = payload;
+      user.set({
+        ...(phone && { phone }),
+        ...(address && { address }),
+        ...(city && { city }),
+        ...(state && { state }),
+        ...(postalCode && { postalCode }),
+        ...(country && { country }),
+      });
+      user.save();
+    } else {
+      throw new Error("User not found");
+    }
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }

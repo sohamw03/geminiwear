@@ -1,24 +1,21 @@
 import connectDb from "@/middleware/mongoose";
-import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
+
+import { NextRequest, NextResponse } from "next/server";
 import CreateRazorpayOrder from "./CreateRazorpayOrder";
 import Order from "../../../../models/Order";
 import User from "../../../../models/User";
+import { KeyLike, jwtDecrypt } from "jose";
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const authorizationHeader = req.headers.get("Authorization");
-  const token = authorizationHeader?.split(" ")[1] as string;
-  const userData = jwt.decode(token) as any;
+  const token = req.cookies.get("token")?.value as string;
+  const userData = jwtDecrypt(token, process.env.JWT_SECRET as unknown as KeyLike) as any;
 
   const orderData = await req.json();
   let dataToReturn;
 
   try {
-    if (!jwt.verify(token, process.env.JWT_SECRET as jwt.Secret)) {
-      return NextResponse.json({ success: false, error: "No token provided" }, { status: 401 });
-    }
     switch (orderData.type) {
       case "createorder":
         dataToReturn = await CreateRazorpayOrder({

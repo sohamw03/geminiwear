@@ -4,17 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Checkbox } from "@/shadcn/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
-import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { jwtDecode } from "jwt-decode";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -70,8 +70,17 @@ export default function Login() {
       if (responseJson.success && response.ok) {
         toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
         form.reset();
-        localStorage.setItem("token", responseJson.data.token);
-        const user = { ...jwtDecode(responseJson.data.token), loggedIn: true };
+
+        let user = { loggedIn: false, name: "" };
+        const match = document.cookie.match("(^|;)\\s*" + "token" + "\\s*=\\s*([^;]+)");
+        const token = match ? match.pop() : "";
+
+        if (token) {
+          const decodedToken = jwtDecode(token) as { exp: number; name: string };
+          const currentTime = Date.now() / 1000;
+          user = { loggedIn: decodedToken.exp > currentTime, name: decodedToken.name };
+        }
+
         setUser(user);
 
         setTimeout(() => {
@@ -83,8 +92,8 @@ export default function Login() {
       }
     } catch (error) {
       console.error(error);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
