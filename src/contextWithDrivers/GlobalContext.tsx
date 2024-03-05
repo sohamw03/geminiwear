@@ -128,8 +128,21 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
   };
 
   // Auth logout
-  const logout = () => {
-    
+  const logout = async () => {
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const responseJson = await response.json();
+      if (responseJson.success && response.ok) {
+        console.log("Logged out");
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setUser(() => ({ loggedIn: false }));
     clearCart();
   };
