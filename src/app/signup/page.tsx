@@ -8,7 +8,7 @@ import { Button } from "@/shadcn/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -41,6 +41,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const params = useSearchParams();
+  const email = params.get("email");
 
   // Form validation
   const form = useForm({
@@ -48,7 +50,7 @@ export default function Signup() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      email: "",
+      email: `${email || ""}`,
       password: "",
       confirmPassword: "",
     },

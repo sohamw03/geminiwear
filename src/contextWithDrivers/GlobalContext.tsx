@@ -1,5 +1,6 @@
 "use client";
 import { jwtDecode } from "jwt-decode";
+import { getSession, signOut } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Types
@@ -129,20 +130,21 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
 
   // Auth logout
   const logout = async () => {
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const responseJson = await response.json();
-      if (responseJson.success && response.ok) {
-        console.log("Logged out");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    signOut();
+    // try {
+    //   const response = await fetch("/api/auth/logout", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    //   const responseJson = await response.json();
+    //   if (responseJson.success && response.ok) {
+    //     console.log("Logged out");
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
     setUser(() => ({ loggedIn: false }));
     clearCart();
   };
@@ -172,23 +174,24 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
 
   // Load cart from local storage on reload
   useEffect(() => {
-    try {
-      const data = localStorage.getItem("cart");
-      const match = document.cookie.match("(^|;)\\s*" + "token" + "\\s*=\\s*([^;]+)");
-      const token = match ? match.pop() : "";
+    const loadStateFromLocal = async () => {
+      try {
+        const data = localStorage.getItem("cart");
+        const token = await getSession();
 
-      if (token) {
-        setUser(() => ({ ...jwtDecode(token), loggedIn: true }));
-      }
+        if (token) {
+          setUser(() => ({ ...token.user, loggedIn: true }));
+        }
 
-      if (data) {
-        setCart(() => JSON.parse(data));
-        calculateSubTotal(JSON.parse(data));
+        if (data) {
+          setCart(() => JSON.parse(data));
+          calculateSubTotal(JSON.parse(data));
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-      localStorage.clear();
-    }
+    };
+    loadStateFromLocal();
   }, []);
 
   const values: Values = {

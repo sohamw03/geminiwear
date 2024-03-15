@@ -9,6 +9,8 @@ async function connectDb() {
     await mongoose.connect(`${process.env.MONGODB_URI}/geminiwear-database`);
     console.log("MongoDB Connected");
     mongoose.set("debug", true);
+    mongoose.set("autoIndex", true);
+    
   } catch (error) {
     console.log("MongoDB Connection Error", error);
   }

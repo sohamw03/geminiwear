@@ -4,17 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useGlobal } from "@/contextWithDrivers/GlobalContext";
 import { Button } from "@/shadcn/components/ui/button";
 import { Checkbox } from "@/shadcn/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
+import { Separator } from "@/shadcn/components/ui/separator";
+import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { jwtDecode } from "jwt-decode";
+import { getSession, signIn, useSession } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -53,45 +56,34 @@ export default function Login() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
     console.log(data);
-    const payload = {
+
+    const response = await signIn("credentials", {
+      redirect: false,
       email: data.email,
       password: data.password,
-    };
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const responseJson = await response.json();
+    });
 
-      if (responseJson.success && response.ok) {
-        toast.success(`Welcome ${responseJson.data.name}!`, { position: "bottom-center" });
-        form.reset();
+    if (response?.ok) {
+      // Authentication successful
+      form.reset();
 
-        let user = { loggedIn: false, name: "" };
-        const match = document.cookie.match("(^|;)\\s*" + "token" + "\\s*=\\s*([^;]+)");
-        const token = match ? match.pop() : "";
+      const session = await getSession();
 
-        if (token) {
-          const decodedToken = jwtDecode(token) as { exp: number; name: string };
-          const currentTime = Date.now() / 1000;
-          user = { loggedIn: decodedToken.exp > currentTime, name: decodedToken.name };
-        }
-
-        setUser(user);
-
-        setTimeout(() => {
-          router.push("/tshirts");
-        }, 2000);
-      } else {
-        form.setError("email", { message: responseJson.error });
-        form.setError("password", { message: responseJson.error });
+      let user = { loggedIn: false, name: "" };
+      if (session && session?.user) {
+        toast.success(`Welcome ${session?.user?.name}!`, { position: "bottom-center" });
+        user = { loggedIn: true, ...(session.user as any) };
       }
-    } catch (error) {
-      console.error(error);
+
+      setUser(user);
+
+      setTimeout(() => {
+        router.push("/tshirts");
+      }, 2000);
+    } else {
+      // Authentication failed
+      form.setError("email", { message: response?.error as string });
+      form.setError("password", { message: response?.error as string });
     }
     setLoading(false);
   };
@@ -154,6 +146,8 @@ export default function Login() {
               </Button>
             </form>
           </Form>
+          <Separator className="my-4" />
+          <GoogleLoginButton />
         </div>
       </section>
     </main>

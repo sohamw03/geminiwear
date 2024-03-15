@@ -1,4 +1,4 @@
-import { KeyLike, jwtVerify } from "jose";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
@@ -6,15 +6,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = req.cookies.get("token")?.value as string;
+  const token = await getServerSession({ secret: process.env.JWT_SECRET, req });
   if (!token) {
-    return NextResponse.rewrite(new URL("/dest", req.url));
-  }
-
-  const secretKey = Buffer.from(process.env.JWT_SECRET as string, "utf8");
-  const isVerified = await jwtVerify(token, secretKey, { algorithms: ["HS256"] });
-  if (!isVerified) {
-    return NextResponse.rewrite(new URL("/dest", req.url));
+    return NextResponse.rewrite(new URL("/login", req.url));
   }
 
   return NextResponse.next();
