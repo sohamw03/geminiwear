@@ -83,7 +83,7 @@ export default function Footer() {
         <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
           <p className="text-gray-400 text-sm text-center sm:text-left">
             © 2023 GeminiWear —
-            <a href="https://github.com/geminiwear" rel="noopener noreferrer" className="text-gray-500 ml-1" target="_blank">
+            <a href="https://github.com/sohamw03/geminiwear" rel="noopener noreferrer" className="text-gray-500 ml-1" target="_blank">
               @sohamw03
             </a>
           </p>
