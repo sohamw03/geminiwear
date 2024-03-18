@@ -5,8 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import User from "../../../../../models/User";
 
-export const runtime = "nodejs";
-
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET as string,
   // Providers array will be configured in the next steps
