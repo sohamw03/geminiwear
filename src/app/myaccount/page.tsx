@@ -9,15 +9,17 @@ import { Input } from "@/shadcn/components/ui/input";
 import { Label } from "@/shadcn/components/ui/label";
 import { ScrollArea, ScrollBar } from "@/shadcn/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shadcn/components/ui/select";
+import { Separator } from "@/shadcn/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { Textarea } from "@/shadcn/components/ui/textarea";
+import { Check, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function MyAccount() {
   // Global context
-  const { user, getUser } = useGlobal();
+  const { user, getUser, logout } = useGlobal();
 
   // Local context
   const [account, setAccount] = useState({
@@ -34,6 +36,7 @@ export default function MyAccount() {
   const [isAccountDeleted, setIsAccountDeleted] = useState(false);
   const [userTakeoutData, setUserTakeoutData] = useState({} as any);
   const [loadingStates, setLoadingStates] = useState({ saveData: false, deleteAccount: false });
+  const [isCopied, setIsCopied] = useState(false);
 
   const router = useRouter();
 
@@ -99,6 +102,11 @@ export default function MyAccount() {
     }
   };
 
+  const getUserData = async () => {
+    setUserTakeoutData(user);
+  };
+
+  // Delete account
   const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     const confirmation = (e.target as HTMLFormElement).confirmation.value;
@@ -117,9 +125,9 @@ export default function MyAccount() {
       const responseJson = await response.json();
 
       if (responseJson.success && response.ok) {
-        toast.success("Account deleted successfully! Please find your data below.", { position: "bottom-center" });
+        toast.success("Account deleted successfully!", { position: "bottom-center" });
         setIsAccountDeleted(true);
-        setUserTakeoutData(responseJson.data);
+        logout();
       } else {
         toast.error(`Error deleting account. Please try again later.`, { position: "bottom-center" });
       }
@@ -157,7 +165,7 @@ export default function MyAccount() {
               <TabsTrigger value="account">Account</TabsTrigger>
               <TabsTrigger value="password">Password</TabsTrigger>
               <TabsTrigger value="address">Address</TabsTrigger>
-              <TabsTrigger value="security">Security</TabsTrigger>
+              <TabsTrigger value="security">Security & Data</TabsTrigger>
             </TabsList>
 
             {/* Account */}
@@ -335,19 +343,41 @@ export default function MyAccount() {
             {/* Security */}
             <TabsContent value="security">
               <Card>
-                <CardHeader>
-                  <CardTitle>Delete my account</CardTitle>
-                  <CardDescription>Delete your account and get all the data.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {/* User Data */}
-                  {isAccountDeleted && ( //
+                <CardContent className="space-y-2 pt-6">
+                  {/* Export User Data */}
+                  <h3 className="text-xl leading-none tracking-tight">Export Data</h3>
+                  <p className="text-sm text-muted-foreground pb-2">Export all the data that we have.</p>
+                  <Button
+                    className="mb-6"
+                    onClick={() => {
+                      getUserData();
+                    }}
+                    variant={"secondary"}>
+                    Export
+                  </Button>
+                  {JSON.stringify(userTakeoutData) !== "{}" && (
                     <ScrollArea className="whitespace-nowrap bg-inherit p-4 rounded-lg border">
+                      {/* Copy Button */}
+                      <Button
+                        variant="outline"
+                        className="absolute top-4 right-4 rounded w-8 h-8 p-2"
+                        onClick={() => {
+                          navigator.clipboard.writeText(JSON.stringify(userTakeoutData, null, 2));
+                          setIsCopied(true);
+                          setTimeout(() => {
+                            setIsCopied(false);
+                          }, 2000);
+                        }}>
+                        {!isCopied ? <Copy className="text-sm" size={16} /> : <Check className="text-sm" size={16} />}
+                      </Button>
                       <pre>{JSON.stringify(userTakeoutData, null, 2)}</pre>
                       <ScrollBar orientation="horizontal" />
                     </ScrollArea>
                   )}
+                  <Separator className="!my-4" />
                   {/* Delete Account */}
+                  <h3 className="text-xl leading-none tracking-tight pb-2">Delete your Account</h3>
+                  <p className="text-sm text-muted-foreground pb-2">Once you delete your account, there is no going back. Please be certain.</p>
                   <Dialog open={isAccountDeleted ? false : undefined}>
                     <DialogTrigger asChild>
                       {!isAccountDeleted && (
@@ -377,7 +407,6 @@ export default function MyAccount() {
                     </DialogContent>
                   </Dialog>
                 </CardContent>
-                <CardFooter className="flex flex-row gap-2"></CardFooter>
               </Card>
             </TabsContent>
           </Tabs>

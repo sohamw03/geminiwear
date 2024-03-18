@@ -1,9 +1,9 @@
+import connectDb from "@/middleware/mongoose";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import User from "../../../../../models/User";
-import connectDb from "@/middleware/mongoose";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET as string,
@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login", // The signIn page
-    signOut: "/", // The signOut page
+    signOut: "/login", // The signOut page
     error: "/signup", // Error code passed in query string as ?error=
     verifyRequest: "/auth/verify-request", // (used for check email message)
     newUser: "/", // If set, new users will be directed here on first sign in
@@ -46,14 +46,14 @@ export const authOptions: NextAuthOptions = {
 
       const myprofile = profile as any;
 
-      if (account?.provider === "google" && myprofile.email_verified && myprofile.email.endsWith("@gmail.com")) {
+      if (account?.provider === "google" && myprofile.email_verified) {
         console.log({ account, profile });
 
         try {
           const user = await User.findOne({ email: myprofile.email });
           console.log({ user });
           if (user) {
-            return Promise.resolve("/");
+            return true;
           } else {
             return Promise.resolve(`/signup?email=${encodeURIComponent(myprofile.email)}`);
           }
@@ -76,19 +76,20 @@ export const authOptions: NextAuthOptions = {
           name: existingUser?.name,
           email: existingUser?.email,
           address: existingUser?.address,
-        };
+        } as { name: string; email: string; address: string };
       }
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token, user }) => {
       console.log("session callback", { session, token });
       // Add property to session, like an access control list
-      session.user = token.userData as any;
+      session.user = token.userData as { name: string; email: string; address: string };
       return session;
     },
   },
   session: {
     maxAge: 24 * 60 * 60, // 1 day
+    strategy: "jwt",
   },
   // Additional configuration will be added here
 };

@@ -1,19 +1,18 @@
+import { getCurrentUserData } from "@/lib/utils";
 import connectDb from "@/middleware/mongoose";
-import { decodeJwt } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../../models/User";
 
 export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const token = req.cookies.get("token")?.value as string;
-
   let userData = {};
 
   try {
-    const userDataToken: any = await decodeJwt(token);
+    const userDataToken = await getCurrentUserData(req);
+    console.log({ userDataToken });
 
-    const user = await User.findOne({ email: userDataToken.email });
+    const user = await User.findOne({ email: userDataToken?.email });
     userData = {
       name: user?.name, //
       email: user?.email,

@@ -1,18 +1,17 @@
 import connectDb from "@/middleware/mongoose";
 
 import { NextRequest, NextResponse } from "next/server";
-import CreateRazorpayOrder from "./CreateRazorpayOrder";
 import Order from "../../../../models/Order";
 import User from "../../../../models/User";
-import { KeyLike, jwtDecrypt } from "jose";
+import CreateRazorpayOrder from "./CreateRazorpayOrder";
+import { getCurrentUserData } from "@/lib/utils";
 
 export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const token = req.cookies.get("token")?.value as string;
-  const userData = jwtDecrypt(token, process.env.JWT_SECRET as unknown as KeyLike) as any;
-
   const orderData = await req.json();
+  const userData = await getCurrentUserData(req);
+
   let dataToReturn;
 
   try {
@@ -27,7 +26,7 @@ export const POST = async (req: NextRequest) => {
         break;
 
       case "successpayment":
-        const user = await User.findOne({ email: userData.email });
+        const user = await User.findOne({ email: userData?.email });
         console.log(orderData);
         const order = new Order({
           userId: user?._id,

@@ -1,6 +1,5 @@
 "use client";
-import { jwtDecode } from "jwt-decode";
-import { getSession, signOut } from "next-auth/react";
+import { SessionProvider, getSession, signOut } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Types
@@ -130,22 +129,11 @@ export function GlobalContextProvider({ children }: { children: React.ReactNode 
 
   // Auth logout
   const logout = async () => {
+    // Sign out from next-auth
     signOut();
-    // try {
-    //   const response = await fetch("/api/auth/logout", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   const responseJson = await response.json();
-    //   if (responseJson.success && response.ok) {
-    //     console.log("Logged out");
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    // Clear user data
     setUser(() => ({ loggedIn: false }));
+    // Clear cart
     clearCart();
   };
 

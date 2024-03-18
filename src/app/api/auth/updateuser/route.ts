@@ -1,20 +1,19 @@
+import { getCurrentUserData } from "@/lib/utils";
 import connectDb from "@/middleware/mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../../models/User";
-import { decodeJwt } from "jose";
 
 export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const token = req.cookies.get("token")?.value as string;
-
   const payload: any = await req.json();
 
   try {
-    const userData: any = await decodeJwt(token);
-    let user = await User.findOne({ email: userData.email });
+    const userData = await getCurrentUserData(req);
+    let user = await User.findOne({ email: userData?.email });
     if (user) {
       const { phone, address, city, state, postalCode, country } = payload;
+      // Update only the fields that are present in the payload
       user.set({
         ...(phone && { phone }),
         ...(address && { address }),

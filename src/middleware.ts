@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
@@ -6,8 +6,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getServerSession({ secret: process.env.JWT_SECRET, req });
-  if (!token) {
+  const requestForNextAuth = {
+    headers: Object.fromEntries(req.headers.entries()),
+  };
+  const session = await getSession({ req: requestForNextAuth });
+  if (!session?.user) {
     return NextResponse.rewrite(new URL("/login", req.url));
   }
 
