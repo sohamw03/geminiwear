@@ -16,7 +16,7 @@ const authOptions: NextAuthOptions = {
     CredentialsProvider({
       async authorize(credentials) {
         await connectDb();
-        console.log("credentials", credentials);
+        // console.log("credentials", credentials);
         const user = await User.findOne({ email: credentials?.email }).select("+password").exec();
         if (!user) {
           throw new Error("Invalid email or password");
@@ -47,11 +47,11 @@ const authOptions: NextAuthOptions = {
       const myprofile = profile as any;
 
       if (account?.provider === "google" && myprofile.email_verified) {
-        console.log({ account, profile });
+        // console.log({ account, profile });
 
         try {
           const user = await User.findOne({ email: myprofile.email });
-          console.log({ user });
+          // console.log({ user });
           if (user) {
             return true;
           } else {
@@ -67,7 +67,7 @@ const authOptions: NextAuthOptions = {
       return false;
     },
     jwt: async ({ token, user, account, profile, trigger }) => {
-      console.log("jwt callback", { token, user, account, profile, trigger });
+      // console.log("jwt callback", { token, user, account, profile, trigger });
       if (user) {
         connectDb();
         const existingUser = await User.findOne({ email: user.email });
@@ -81,7 +81,7 @@ const authOptions: NextAuthOptions = {
       return token;
     },
     session: async ({ session, token, user }) => {
-      console.log("session callback", { session, token });
+      // console.log("session callback", { session, token });
       // Add property to session, like an access control list
       session.user = token.userData as { name: string; email: string; address: string };
       return session;

@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const userDataToken = await getCurrentUserData(req);
-    console.log({ userDataToken });
+    // console.log({ userDataToken });
 
     const user = await User.findOne({ email: userDataToken?.email });
     userData = {
