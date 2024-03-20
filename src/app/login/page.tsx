@@ -12,12 +12,11 @@ import { Checkbox } from "@/shadcn/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/shadcn/components/ui/form";
 import { Input } from "@/shadcn/components/ui/input";
 import { Separator } from "@/shadcn/components/ui/separator";
-import { jwtDecode } from "jwt-decode";
+import { getSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { getSession, signIn, useSession } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().email({
