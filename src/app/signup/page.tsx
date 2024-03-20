@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/shadcn/components/ui/input";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const formSchema = z
@@ -36,7 +36,7 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-export default function Signup() {
+export function Signup() {
   // Local state
   const [loading, setLoading] = useState(false);
 
@@ -167,5 +167,13 @@ export default function Signup() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <Signup />
+    </Suspense>
   );
 }

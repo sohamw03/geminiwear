@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import User from "../../../../../models/User";
 
 const authOptions: NextAuthOptions = {
-  secret: process.env.JWT_SECRET as string,
+  secret: process.env.NEXTAUTH_SECRET as string,
   // Providers array will be configured in the next steps
   providers: [
     GoogleProvider({
