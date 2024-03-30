@@ -133,7 +133,7 @@ export default function Login() {
                       <FormLabel>Remember me</FormLabel>
                     </div>
                     <FormLabel className="flex justify-end align-middle flex-1 underline">
-                      <Link href="/forgot-password" className="text-sm font-medium leading-none opacity-70">
+                      <Link href="/forgotpassword" className="text-sm font-medium leading-none opacity-70">
                         Forgot your password?
                       </Link>
                     </FormLabel>

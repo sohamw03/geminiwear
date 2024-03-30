@@ -11,6 +11,8 @@ interface IUser extends Document {
   postalCode: string;
   country: string;
   cardDetails: string;
+  resetPasswordToken: string;
+  resetPasswordExpires: number;
   setPassword: (password: string) => void;
   validPassword: (password: string) => boolean;
 }
@@ -33,6 +35,8 @@ try {
       cardDetails: { type: String },
       hash: String,
       salt: String,
+      resetPasswordToken: String,
+      resetPasswordExpires: Number,
     },
     { timestamps: true }
   );

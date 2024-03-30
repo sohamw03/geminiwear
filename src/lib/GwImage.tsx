@@ -8,10 +8,10 @@ interface GwImageProps {
   src: string;
   alt: string;
   className?: string;
-  style?: React.CSSProperties;
+  superStyle?: React.CSSProperties;
 }
 
-export default function GwImage({ src, alt, className }: GwImageProps) {
+export default function GwImage({ src, alt, className, superStyle }: GwImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -42,7 +42,7 @@ export default function GwImage({ src, alt, className }: GwImageProps) {
     return (
       <LazyMotion features={domAnimation}>
         <m.div className={className} initial={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 1 } }}>
-          <Skeleton className={className} />
+          <Skeleton className={className} style={superStyle} />
         </m.div>
       </LazyMotion>
     );
@@ -51,7 +51,7 @@ export default function GwImage({ src, alt, className }: GwImageProps) {
   if (isError) {
     // Render error state here
     return (
-      <div className={cn("!flex justify-center items-center bg-secondary", className)}>
+      <div className={cn("!flex justify-center items-center bg-secondary", className)} style={superStyle}>
         <span>Image cannot be loaded</span>
       </div>
     );
@@ -59,7 +59,7 @@ export default function GwImage({ src, alt, className }: GwImageProps) {
 
   return (
     <LazyMotion features={domAnimation}>
-      <m.img src={src} alt={alt} loading="lazy" className={cn("bg-secondary-foreground", className)} initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 1 } }} exit={{ opacity: 0, zoom: 0.5, transition: { duration: 1 } }} />
+      <m.img src={src} alt={alt} loading="lazy" className={cn("bg-secondary-foreground", className)} initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: 1 } }} exit={{ opacity: 0, zoom: 0.5, transition: { duration: 1 } }} style={superStyle} />
     </LazyMotion>
   );
 }

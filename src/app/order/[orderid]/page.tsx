@@ -6,7 +6,7 @@ import { MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function Order() {
+export default function Order({ params }: { params: { orderid: string } }) {
   const [order, setOrder] = useState({
     _id: "",
     products: [],
@@ -21,7 +21,7 @@ export default function Order() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ orderid: "" }),
+        body: JSON.stringify({ orderid: params.orderid }),
       });
       const responseJson = await response.json();
 

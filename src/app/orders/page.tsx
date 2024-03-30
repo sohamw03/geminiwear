@@ -2,6 +2,7 @@
 import GwImage from "@/lib/GwImage";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shadcn/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shadcn/components/ui/table";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Orders() {
@@ -14,6 +15,7 @@ export default function Orders() {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ orderid: "" }),
       });
       const responseJson = await response.json();
 
@@ -68,12 +70,14 @@ export default function Orders() {
                     <TableHead className="w-0"></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+
+                <TableBody className="relative">
+                  <Link href={`/order/${order._id}`} className="absolute inset-0"></Link>
                   {/* Products in the order */}
                   {order.products.map((item: any, jndex: number) => (
                     <TableRow key={jndex}>
                       <TableCell className="w-24">
-                        <GwImage src={item.img} className="w-[180px] aspect-square rounded-sm" alt={item.slug} />
+                        <GwImage src={item.img} className="w-[180px] aspect-square rounded-sm object-contain" alt={item.slug} />
                       </TableCell>
                       <TableCell className="font-medium flex flex-col gap-2">
                         <span>
