@@ -9,7 +9,7 @@ export default function Home() {
           <h1 className="sm:text-5xl text-4xl font-semibold title-font mb-2 text-gray-100">Welcome to GeminiWear</h1>
           <p className="lg:w-1/2 w-full leading-relaxed text-gray-300">Discover the latest trends in fashion and shop for high-quality clothing and accessories.</p>
         </div>
-        <GwImage src="/images/hero.jpeg" alt={"hero"} className="w-full object-cover h-[88svh] brightness-50" style={{ objectPosition: "center 75%" }} />
+        <GwImage src="/images/hero.jpeg" alt={"hero"} className="w-full object-cover h-[88svh] brightness-50" superStyle={{ objectPosition: "center 75%" }} />
       </section>
       <section className="text-gray-400 body-font">
         <div className="container px-5 py-24 mx-auto">

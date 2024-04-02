@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const userData = await getCurrentUserData(req);
-    await User.deleteOne({ email: userData?.email });
+    await User.deleteOne({ email: userData?.email || "" });
   } catch (error) {
     return NextResponse.json({ success: false, error: `${error}` }, { status: 500 });
   }

@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const userData = await getCurrentUserData(req);
-    let user = await User.findOne({ email: userData?.email });
+    let user = await User.findOne({ email: userData?.email || "" });
     if (user) {
       const { phone, address, city, state, postalCode, country } = payload;
       // Update only the fields that are present in the payload

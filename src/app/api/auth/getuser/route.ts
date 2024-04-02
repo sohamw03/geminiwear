@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
     const userDataToken = await getCurrentUserData(req);
     // console.log({ userDataToken });
 
-    const user = await User.findOne({ email: userDataToken?.email });
+    const user = await User.findOne({ email: userDataToken?.email || "" });
     userData = {
       name: user?.name, //
       email: user?.email,

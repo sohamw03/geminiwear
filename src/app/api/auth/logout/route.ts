@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
   const userData = await getCurrentUserData(req);
 
   try {
-    const existingUser = await User.findOne({ email: userData?.email });
+    const existingUser = await User.findOne({ email: userData?.email || "" });
     if (existingUser) {
       cookies().delete("token");
       return NextResponse.json({ success: true, message: `User logged out` }, { status: 200 });

@@ -26,7 +26,7 @@ export const POST = async (req: NextRequest) => {
         break;
 
       case "successpayment":
-        const user = await User.findOne({ email: userData?.email });
+        const user = await User.findOne({ email: userData?.email || "" });
         // console.log(orderData);
         const order = new Order({
           userId: user?._id,

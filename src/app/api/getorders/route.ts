@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const userData = await getCurrentUserData(req);
-    const user = await User.findOne({ email: userData?.email });
+    const user = await User.findOne({ email: userData?.email || "" });
     switch (mode) {
       case "one":
         console.log("orderSpecific");

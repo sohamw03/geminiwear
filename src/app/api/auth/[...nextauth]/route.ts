@@ -70,7 +70,7 @@ const authOptions: NextAuthOptions = {
       // console.log("jwt callback", { token, user, account, profile, trigger });
       if (user) {
         connectDb();
-        const existingUser = await User.findOne({ email: user.email });
+        const existingUser = await User.findOne({ email: user?.email || "" });
         // Add custom claims to the JWT. These will be saved in the JWT.
         token.userData = {
           name: existingUser?.name,
