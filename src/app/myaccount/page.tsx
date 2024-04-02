@@ -16,7 +16,6 @@ import { Check, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { forgotpassword } from "./forgotpassword";
 
 export default function MyAccount() {
   // Global context
@@ -240,7 +239,7 @@ export default function MyAccount() {
                 <CardContent className="space-y-2">
                   <Button
                     onClick={async () => {
-                      const res = await forgotpassword();
+                      // const res = await forgotpassword();
                     }}>
                     Reset Password
                   </Button>

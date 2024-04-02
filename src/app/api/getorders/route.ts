@@ -7,17 +7,20 @@ import User from "../../../../models/User";
 export const POST = async (req: NextRequest) => {
   await connectDb();
 
-  const { orderid }: { orderid: string } = await req.json();
-  let ordersData = [];
+  const { orderid, mode }: { orderid: string; mode: string } = await req.json();
+  let ordersData: any[] = [];
 
   try {
     const userData = await getCurrentUserData(req);
     const user = await User.findOne({ email: userData?.email });
-    if (orderid.length > 0) {
-      console.log("orderSpecific");
-      ordersData = await Order.find({ userId: user?._id, _id: orderid }).sort({ createdAt: -1 });
-    } else {
-      ordersData = await Order.find({ userId: user?._id }).sort({ createdAt: -1 });
+    switch (mode) {
+      case "one":
+        console.log("orderSpecific");
+        ordersData = await Order.find({ userId: user?._id, _id: orderid }).sort({ createdAt: -1 });
+        break;
+      case "all":
+        ordersData = await Order.find({ userId: user?._id }).sort({ createdAt: -1 });
+        break;
     }
     ordersData.forEach((order) => {
       order.amount = order.amount / 100;

@@ -21,7 +21,7 @@ export default function Order({ params }: { params: { orderid: string } }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ orderid: params.orderid }),
+        body: JSON.stringify({ orderid: params.orderid, mode: "one" }),
       });
       const responseJson = await response.json();
 

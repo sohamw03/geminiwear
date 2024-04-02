@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-    const resetExpires = Date.now() + 36000; // 1 hour from now
+    const resetExpires = Date.now() + 3600000; // 1 hour from now
 
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = resetExpires;
@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
     await user.save();
 
     // TODO: Send email with reset token
-    const resetUrl = `${process.env.NEXT_PUBLIC_URL}/auth/resetpassword/${resetToken}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_URL}/forgotpassword/${resetToken}?email=${email}`;
     await sendEmail(
       //
       user.email,
