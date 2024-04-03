@@ -62,16 +62,16 @@ export default function ForgotPassword({ params }: { params: { token: string } }
 
       if (response?.ok && responseJson.success) {
         toast.success(`Password reset successfull!`, { position: "bottom-center" });
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else {
-        toast.error(responseJson.message, { position: "bottom-center" });
+        toast.error(responseJson.error, { position: "bottom-center" });
       }
     } catch (error) {
       console.error(error);
     }
     form.reset();
-    setTimeout(() => {
-      router.push("/");
-    }, 2000);
     setLoading(false);
   };
 

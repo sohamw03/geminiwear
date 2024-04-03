@@ -13,6 +13,7 @@ import { Separator } from "@/shadcn/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/components/ui/tabs";
 import { Textarea } from "@/shadcn/components/ui/textarea";
 import { Check, Copy } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -237,12 +238,9 @@ export default function MyAccount() {
                   <CardDescription>Get a link to reset your password.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button
-                    onClick={async () => {
-                      // const res = await forgotpassword();
-                    }}>
-                    Reset Password
-                  </Button>
+                  <Link href={"/forgotpassword"} target="_blank">
+                    <Button>Reset Password</Button>
+                  </Link>
                 </CardContent>
               </Card>
             </TabsContent>
