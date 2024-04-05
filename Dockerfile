@@ -1,10 +1,18 @@
-FROM node:18-alpine AS base
+# use the official Bun image
+# see all versions at https://hub.docker.com/r/oven/bun/tags
+FROM oven/bun:1 as base
 
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# RUN apt-get update && apt-get install -y libc6-compat
 WORKDIR /app
+
+
+
+# Install bun for bun support
+# https://bun.sh/
+RUN curl -fsSL https://bun.sh/install | bash
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* bun.lock* ./
@@ -23,6 +31,20 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV MONGODB_URI=""
+ENV NEXTAUTH_SECRET=""
+ENV RAZORPAY_TEST_KEY_ID=""
+ENV RAZORPAY_TEST_KEY_SECRET=""
+ENV NEXT_PUBLIC_RAZORPAY_TEST_KEY_ID=""
+ENV NEXT_PUBLIC_RAZORPAY_TEST_KEY_SECRET=""
+ENV PAYMENT_CAPTURE_SECRET_KEY=""
+ENV ENVIRON="DEV"
+ENV GOOGLE_CLIENT_ID=""
+ENV GOOGLE_CLIENT_SECRET=""
+ENV NEXTAUTH_URL="http://0.0.0.0"
+ENV RESEND_API_KEY=""
+ENV NEXT_PUBLIC_URL="http://0.0.0.0"
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -30,7 +52,7 @@ COPY . .
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f bun.lock ]; then bun build; \
+  elif [ -f bun.lockb ]; then bun run build; \
   elif [ -f package-lock.json ]; then npm run build; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
@@ -52,11 +74,6 @@ COPY --from=builder /app/public ./public
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
